@@ -1,0 +1,82 @@
+---
+title: "Activity 1 Jacob Cathcart"
+output: html_notebook
+---
+
+1.	If the reason for collecting this data is for the instructor to describe and compare the students from the two sections, should the data be treated as a population data or a sample data? How many cases or observational units are there?   Which of the variables are numerical and which are categorical?
+
+The data should be treated as a sample data. There is 54 observational units and 7 variables. 
+
+Catagorical Variables: Class, section, and WorkStat
+Numerical Variables: GPA, RegHours, ExpGrade, and Guess
+```{r}
+dim(guessingdata)
+names(guessingdata)
+```
+
+
+2.	Construct the frequency table for the WorkStat variable using the table() command.  What percent of the students are working students?
+
+66.6% of students are working
+
+
+```{r}
+table(WorkStat)
+```
+
+
+3.	Describe the distribution of the GPAs of all the students by describing its shape and discussing statistics that measure the center and the spread of the data distribution.  Attach an appropriate graph that shows this shape and estimate the average GPA from this graph.
+
+The majority of the GPAs were around a 3.2 with a range from 2.75 to 3.5
+
+```{r}
+boxplot(GPA,horizontal=TRUE)
+hist(GPA)
+```
+
+4. & 5.	Repeat #3 for the working students
+```{r}
+Y<-GPA[which(WorkStat == "Y")]
+N<-GPA[which(WorkStat == "N")]
+boxplot(Y,N, names = c("Y","N"),ylab="GPA")
+```
+
+
+6.	Which group of students has higher average GPA, the working students or the non-working students?  Which group’s GPAs have more variability?
+
+They both have almost the exact same average but the people who work had more variability. It had a higher max and min
+
+
+```{r}
+summary(Y,na.rm=TRUE)
+summary(N,na.rm=TRUE)
+```
+
+
+7.	Which section has higher GPA on average, is it section 1 or section 2?  Justify your answer.
+
+Section 101 has a higher average of 3.072 according to the summary of each section
+
+
+```{r}
+section102<-GPA[which(Section=="2")]
+section101<-GPA[which(Section=="1")]
+boxplot(section101,section102, names=c("101","102"),ylab="GPA")
+summary(section101)
+summary(section102)
+```
+
+8.	Compare and discuss the number of hours working students are registered compared with non-working students.  Attach descriptive statistics to justify your answer.
+
+Students who are not working tend to have less hours
+
+
+```{r}
+working<-RegHours[which(WorkStat=="Y")]
+nonworking<-RegHours[which(WorkStat=="N")]
+boxplot(working,nonworking,names=c("Working","Non-Working"),ylab="Hours")
+summary(working)
+summary(nonworking)
+```
+
+
