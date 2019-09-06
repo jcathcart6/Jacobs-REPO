@@ -1,0 +1,326 @@
+"","city","state_name","lat","lng"
+"1","Seattle","Washington",47.6217,-122.3238
+"2","Pullman","Washington",46.7327,-117.1634
+"3","Lincoln","Washington",47.829,-118.415
+"4","Auburn","Washington",47.3039,-122.2108
+"5","Lexington","Washington",46.1873,-122.9054
+"6","Columbia","Virginia",37.7533,-78.1638
+"7","Lexington","Virginia",37.7825,-79.444
+"8","Charlottesville","Virginia",38.0374,-78.4856
+"9","Blacksburg","Virginia",37.23,-80.4277
+"10","Gainesville","Virginia",38.7931,-77.6347
+"11","Madison","Virginia",38.379,-78.2586
+"12","Greenville","Virginia",38.0036,-79.1522
+"13","Pullman","West Virginia",39.188,-80.949
+"14","Auburn","West Virginia",39.0962,-80.8562
+"15","Morgantown","West Virginia",39.6379,-79.9468
+"16","Fayetteville","West Virginia",38.0623,-81.1084
+"17","Athens","West Virginia",37.423,-81.0148
+"18","Madison","West Virginia",38.0632,-81.8046
+"19","Greenville","West Virginia",37.5435,-80.6826
+"20","Columbia","Florida",30.0738,-82.6957
+"21","Tallahassee","Florida",30.4549,-84.2527
+"22","Miami","Florida",25.784,-80.2102
+"23","Auburn","Florida",30.8202,-86.5377
+"24","Oxford","Florida",28.9275,-82.0373
+"25","Raleigh","Florida",29.4479,-82.4681
+"26","Berkeley","Florida",28.5028,-82.5887
+"27","Gainesville","Florida",29.6814,-82.3454
+"28","Madison","Florida",30.4685,-83.416
+"29","Greenville","Florida",30.4668,-83.6352
+"30","Columbia","New Jersey",40.926,-75.0945
+"31","Columbus","New Jersey",40.0726,-74.7207
+"32","Madison","New Jersey",40.7585,-74.417
+"33","Auburn","New Jersey",39.7109,-75.3677
+"34","New Brunswick","New Jersey",40.487,-74.445
+"35","Oxford","New Jersey",40.8052,-74.9966
+"36","Waco","Texas",31.5597,-97.1882
+"37","Fort Worth","Texas",32.7813,-97.3466
+"38","Lubbock","Texas",33.5665,-101.8867
+"39","Lincoln","Texas",30.2874,-96.9633
+"40","Fayetteville","Texas",29.9063,-96.6758
+"41","Athens","Texas",32.2053,-95.8348
+"42","Ames","Texas",30.0451,-94.7373
+"43","Atlanta","Texas",33.1136,-94.1672
+"44","Lexington","Texas",30.4147,-97.0093
+"45","Columbus","Texas",29.7055,-96.5563
+"46","Pullman","Texas",35.1962,-101.7066
+"47","Austin","Texas",30.3038,-97.7545
+"48","Miami","Texas",35.6924,-100.6416
+"49","Lawrence","Texas",32.7424,-96.3428
+"50","Los Angeles","Texas",28.4658,-99
+"51","Oxford","Texas",30.6041,-98.7042
+"52","Bloomington","Texas",28.6504,-96.9022
+"53","College Station","Texas",30.5857,-96.296
+"54","Gainesville","Texas",33.6391,-97.1488
+"55","Greenville","Texas",33.1115,-96.1094
+"56","Atlanta","Louisiana",31.8064,-92.7383
+"57","Oxford","Louisiana",31.9235,-93.628
+"58","Athens","Louisiana",32.6513,-93.0254
+"59","Baton Rouge","Louisiana",30.4422,-91.1314
+"60","Columbia","Louisiana",32.1026,-92.077
+"61","Columbia","North Carolina",35.9203,-76.2422
+"62","Waco","North Carolina",35.3617,-81.4287
+"63","Denver","North Carolina",35.535,-81.0342
+"64","Columbus","North Carolina",35.266,-82.1985
+"65","Norman","North Carolina",35.1698,-79.7232
+"66","Raleigh","North Carolina",35.8323,-78.6441
+"67","Chapel Hill","North Carolina",35.9271,-79.0387
+"68","Lexington","North Carolina",35.8017,-80.2682
+"69","Fayetteville","North Carolina",35.0847,-78.9777
+"70","Nashville","North Carolina",35.9678,-77.9547
+"71","Oxford","North Carolina",36.3156,-78.585
+"72","Winston-Salem","North Carolina",36.1029,-80.261
+"73","Durham","North Carolina",35.9801,-78.9045
+"74","Madison","North Carolina",36.3868,-79.975
+"75","Greenville","North Carolina",35.5958,-77.3764
+"76","Atlanta","Nebraska",40.3685,-99.4731
+"77","Waco","Nebraska",40.8969,-97.4615
+"78","Louisville","Nebraska",40.9973,-96.1606
+"79","Columbus","Nebraska",41.436,-97.3559
+"80","Auburn","Nebraska",40.3894,-95.8436
+"81","Lincoln","Nebraska",40.8102,-96.6808
+"82","Lexington","Nebraska",40.778,-99.7462
+"83","Oxford","Nebraska",40.253,-99.6322
+"84","Bloomington","Nebraska",40.0938,-99.0384
+"85","Syracuse","Nebraska",40.6636,-96.1827
+"86","Madison","Nebraska",41.8286,-97.4567
+"87","Norman","Nebraska",40.479,-98.7921
+"88","Lawrence","Nebraska",40.2902,-98.2596
+"89","Ames","Nebraska",41.4491,-96.6262
+"90","Atlanta","New York",42.5542,-77.4725
+"91","Syracuse","New York",43.0409,-76.1438
+"92","Stillwater","New York",42.9467,-73.6441
+"93","Oxford","New York",42.4412,-75.596
+"94","Nashville","New York",43.0773,-78.8659
+"95","Auburn","New York",42.9338,-76.5684
+"96","Fayetteville","New York",43.0308,-75.9985
+"97","Athens","New York",42.2695,-73.8104
+"98","Gainesville","New York",42.6415,-78.1347
+"99","Madison","New York",42.8977,-75.5123
+"100","Greenville","New York",42.4132,-74.0217
+"101","Lawrence","New York",40.6042,-73.7149
+"102","Ames","New York",42.8373,-74.6014
+"103","Manhattan","New York",40.7834,-73.9662
+"104","State College","Pennsylvania",40.791,-77.8568
+"105","Fayetteville","Pennsylvania",39.9114,-77.5651
+"106","Athens","Pennsylvania",41.9515,-76.5186
+"107","Madison","Pennsylvania",40.2456,-79.6748
+"108","Columbia","Pennsylvania",40.0347,-76.4943
+"109","Austin","Pennsylvania",41.6373,-78.0903
+"110","Denver","Pennsylvania",40.2325,-76.1393
+"111","Stillwater","Pennsylvania",41.1506,-76.3693
+"112","Columbus","Pennsylvania",41.9478,-79.5835
+"113","Morgantown","Pennsylvania",40.1539,-75.8906
+"114","Pittsburgh","Pennsylvania",40.4396,-79.9763
+"115","Lincoln","Pennsylvania",40.2994,-79.8554
+"116","Knoxville","Pennsylvania",41.9604,-77.4379
+"117","Auburn","Pennsylvania",40.5948,-76.0975
+"118","Oxford","Pennsylvania",39.7858,-75.9801
+"119","Greenville","Pennsylvania",41.4052,-80.3838
+"120","Lawrence","Pennsylvania",40.3042,-80.1185
+"121","Madison","California",38.675,-121.9702
+"122","Columbia","California",38.0333,-120.4097
+"123","Berkeley","California",37.8723,-122.276
+"124","Stanford","California",37.4252,-122.1674
+"125","Lincoln","California",38.8749,-121.2943
+"126","Auburn","California",38.8948,-121.0778
+"127","Los Angeles","California",34.114,-118.4068
+"128","Bloomington","California",34.0604,-117.4015
+"129","Durham","California",39.6232,-121.7874
+"130","Greenville","California",40.1336,-120.9454
+"131","Denver","Colorado",39.7621,-104.8759
+"132","Louisville","Colorado",39.9708,-105.1441
+"133","Oxford","Colorado",37.1689,-107.7142
+"134","Starkville","Colorado",37.1166,-104.5231
+"135","Columbia","Alabama",31.2968,-85.1103
+"136","Louisville","Alabama",31.781,-85.5583
+"137","Tuscaloosa","Alabama",33.2349,-87.5268
+"138","Oxford","Alabama",33.5963,-85.8718
+"139","Knoxville","Alabama",32.9923,-87.7906
+"140","Lincoln","Alabama",33.5935,-86.1372
+"141","Lexington","Alabama",34.9652,-87.3735
+"142","Auburn","Alabama",32.6084,-85.4897
+"143","Fayetteville","Alabama",33.1643,-86.4411
+"144","Athens","Alabama",34.7846,-86.9516
+"145","Madison","Alabama",34.7113,-86.7617
+"146","Greenville","Alabama",31.8437,-86.6379
+"147","Gainesville","Alabama",32.8149,-88.1608
+"148","Atlanta","Arkansas",33.1187,-93.0527
+"149","Nashville","Arkansas",33.9413,-93.852
+"150","Lincoln","Arkansas",35.9486,-94.4178
+"151","Knoxville","Arkansas",35.3778,-93.3632
+"152","Austin","Arkansas",35.0072,-91.9892
+"153","Fayetteville","Arkansas",36.0713,-94.166
+"154","Oxford","Arkansas",36.2091,-91.9194
+"155","Provo","Arkansas",34.0376,-94.1077
+"156","College Station","Arkansas",34.7059,-92.2305
+"157","Durham","Arkansas",35.9495,-93.9805
+"158","Gainesville","Arkansas",36.1648,-90.5107
+"159","Madison","Arkansas",35.0189,-90.7303
+"160","Norman","Arkansas",34.4586,-93.6792
+"161","Evanston","Illinois",42.0463,-87.6942
+"162","Fayetteville","Illinois",38.3778,-89.7967
+"163","Athens","Illinois",39.9618,-89.7217
+"164","Madison","Illinois",38.7021,-90.1475
+"165","Columbia","Illinois",38.4581,-90.2157
+"166","Atlanta","Illinois",40.2636,-89.2312
+"167","Lexington","Illinois",40.6469,-88.7847
+"168","Nashville","Illinois",38.3515,-89.3772
+"169","Louisville","Illinois",38.7694,-88.5066
+"170","Columbus","Illinois",39.9881,-91.1452
+"171","Knoxville","Illinois",40.907,-90.2857
+"172","Raleigh","Illinois",37.8262,-88.5304
+"173","Champaign","Illinois",40.1148,-88.2731
+"174","Berkeley","Illinois",41.8891,-87.9114
+"175","Manhattan","Illinois",41.4274,-87.9803
+"176","Stanford","Illinois",40.4318,-89.2208
+"177","Lincoln","Illinois",40.1507,-89.372
+"178","Auburn","Illinois",39.5765,-89.7441
+"179","Bloomington","Illinois",40.4756,-88.9698
+"180","Greenville","Illinois",38.8867,-89.3894
+"181","Lawrence","Illinois",42.4411,-88.6412
+"182","Atlanta","Georgia",33.7627,-84.4231
+"183","Knoxville","Georgia",32.7232,-83.996
+"184","Auburn","Georgia",34.0151,-83.8316
+"185","Lexington","Georgia",33.8701,-83.1102
+"186","Fayetteville","Georgia",33.4497,-84.4703
+"187","Athens","Georgia",33.9508,-83.3689
+"188","Nashville","Georgia",31.2051,-83.2487
+"189","Oxford","Georgia",33.6277,-83.8721
+"190","Waco","Georgia",33.7026,-85.1892
+"191","Raleigh","Georgia",32.9368,-84.6363
+"192","Louisville","Georgia",32.9954,-82.4
+"193","Gainesville","Georgia",34.2903,-83.8299
+"194","College Park","Georgia",33.6385,-84.4597
+"195","Columbus","Georgia",32.51,-84.8771
+"196","Madison","Georgia",33.5791,-83.4758
+"197","Greenville","Georgia",33.0322,-84.7163
+"198","Atlanta","Indiana",40.2135,-86.0266
+"199","Denver","Indiana",40.8646,-86.0771
+"200","Columbus","Indiana",39.2094,-85.9178
+"201","West Lafayette","Indiana",40.4432,-86.9239
+"202","Syracuse","Indiana",41.4215,-85.749
+"203","Auburn","Indiana",41.3666,-85.0559
+"204","Morgantown","Indiana",39.3729,-86.2585
+"205","Lexington","Indiana",38.6523,-85.6252
+"206","Nashville","Indiana",39.2081,-86.2383
+"207","Oxford","Indiana",40.5222,-87.2484
+"208","Bloomington","Indiana",39.1637,-86.5257
+"209","Madison","Indiana",38.758,-85.397
+"210","Greenville","Indiana",38.3717,-85.9847
+"211","Lawrence","Indiana",39.8674,-85.9904
+"212","Austin","Indiana",38.7417,-85.8118
+"213","Columbia","Iowa",41.1753,-93.1499
+"214","Denver","Iowa",42.6689,-92.3346
+"215","Iowa City","Iowa",41.6558,-91.5304
+"216","Knoxville","Iowa",41.3188,-93.1024
+"217","Lincoln","Iowa",42.2635,-92.6914
+"218","Auburn","Iowa",42.2496,-94.8778
+"219","Oxford","Iowa",41.7227,-91.7913
+"220","Greenville","Iowa",43.017,-95.1461
+"221","Ames","Iowa",42.0262,-93.6275
+"222","Stillwater","Oklahoma",36.1315,-97.074
+"223","Lexington","Oklahoma",35.0179,-97.3345
+"224","Miami","Oklahoma",36.8877,-94.8718
+"225","Norman","Oklahoma",35.2335,-97.3471
+"226","Ames","Oklahoma",36.2471,-98.1867
+"227","Miami","Arizona",33.3951,-110.8722
+"228","Tucson","Arizona",32.1558,-110.8777
+"229","Tempe","Arizona",33.3881,-111.9318
+"230","Columbia","Maryland",39.2004,-76.859
+"231","Oxford","Maryland",38.6849,-76.1703
+"232","Bloomington","Maryland",39.4794,-79.0768
+"233","College Park","Maryland",38.9964,-76.9337
+"234","Madison","Maryland",38.5149,-76.2155
+"235","Lexington","Massachusetts",42.4456,-71.2307
+"236","Lawrence","Massachusetts",42.7003,-71.1626
+"237","Oxford","Massachusetts",42.1162,-71.8705
+"238","West Lafayette","Ohio",40.2761,-81.7517
+"239","Fayetteville","Ohio",39.1848,-83.9317
+"240","Athens","Ohio",39.3269,-82.0988
+"241","Syracuse","Ohio",38.9984,-81.9686
+"242","Madison","Ohio",41.7722,-81.053
+"243","Lexington","Ohio",40.68,-82.5795
+"244","Nashville","Ohio",40.5958,-82.113
+"245","Stillwater","Ohio",40.3234,-81.3084
+"246","Louisville","Ohio",40.8366,-81.2646
+"247","Columbus","Ohio",39.9859,-82.9852
+"248","Oxford","Ohio",39.5058,-84.744
+"249","Morgantown","Ohio",39.1295,-83.1982
+"250","Auburn","Ohio",39.3912,-84.7022
+"251","Greenville","Ohio",40.1042,-84.6209
+"252","Columbia","Utah",39.5169,-110.3827
+"253","Salt Lake City","Utah",40.7774,-111.9301
+"254","Provo","Utah",40.2458,-111.6457
+"255","Syracuse","Utah",41.0871,-112.0698
+"256","Greenville","Utah",38.2544,-112.7124
+"257","Columbia","Missouri",38.9475,-92.3263
+"258","Atlanta","Missouri",39.8985,-92.4799
+"259","Syracuse","Missouri",38.6696,-92.8763
+"260","Waco","Missouri",37.247,-94.6003
+"261","Denver","Missouri",40.3989,-94.3233
+"262","Miami","Missouri",39.3224,-93.2258
+"263","Lincoln","Missouri",38.394,-93.3313
+"264","Lexington","Missouri",39.1798,-93.8695
+"265","Knoxville","Missouri",39.4461,-94.0169
+"266","Fayetteville","Missouri",38.8811,-93.7563
+"267","Nashville","Missouri",37.3745,-94.4908
+"268","Berkeley","Missouri",38.7441,-90.3362
+"269","Gainesville","Missouri",36.6063,-92.4245
+"270","Eugene","Missouri",38.3528,-92.4038
+"271","Madison","Missouri",39.4735,-92.2117
+"272","Greenville","Missouri",37.1284,-90.4472
+"273","Columbus","Minnesota",45.2686,-93.0809
+"274","Lincoln","Minnesota",46.2102,-94.6408
+"275","Lexington","Minnesota",45.1381,-93.1714
+"276","Stillwater","Minnesota",45.0567,-92.8283
+"277","Minneapolis","Minnesota",44.9635,-93.2679
+"278","Bloomington","Minnesota",44.8306,-93.315
+"279","Madison","Minnesota",45.0127,-96.1886
+"280","Austin","Minnesota",43.672,-92.9744
+"281","Atlanta","Michigan",45.0017,-84.1535
+"282","Oxford","Michigan",42.8217,-83.2564
+"283","East Lansing","Michigan",42.7483,-84.4834
+"284","Lincoln","Michigan",44.6842,-83.4133
+"285","Auburn","Michigan",43.6022,-84.0758
+"286","Ann Arbor","Michigan",42.2757,-83.7312
+"287","Lexington","Michigan",43.2673,-82.537
+"288","Athens","Michigan",42.0866,-85.2356
+"289","Nashville","Michigan",42.6031,-85.094
+"290","Greenville","Michigan",43.1797,-85.2534
+"291","Lawrence","Michigan",42.2162,-86.0531
+"292","Atlanta","Kansas",37.4357,-96.767
+"293","Columbus","Kansas",37.1723,-94.8442
+"294","Minneapolis","Kansas",39.1244,-97.7
+"295","Lincoln","Kansas",39.0408,-98.1448
+"296","Auburn","Kansas",38.9071,-95.8162
+"297","Louisville","Kansas",39.2499,-96.3145
+"298","Nashville","Kansas",37.438,-98.4227
+"299","Oxford","Kansas",37.2746,-97.1697
+"300","Bloomington","Kansas",39.4517,-98.787
+"301","Durham","Kansas",38.4849,-97.2272
+"302","Syracuse","Kansas",37.9619,-101.7783
+"303","Madison","Kansas",38.1338,-96.1372
+"304","Lawrence","Kansas",38.9603,-95.2643
+"305","Manhattan","Kansas",39.1883,-96.605
+"306","Columbia","South Carolina",34.0366,-80.9043
+"307","Lexington","South Carolina",33.9881,-81.22
+"308","Blacksburg","South Carolina",35.1221,-81.5182
+"309","Greenville","South Carolina",34.8364,-82.3649
+"310","Columbia","Kentucky",37.1036,-85.3074
+"311","Louisville","Kentucky",38.1662,-85.6488
+"312","Columbus","Kentucky",36.7596,-89.102
+"313","Auburn","Kentucky",36.8642,-86.7145
+"314","Morgantown","Kentucky",37.2173,-86.7001
+"315","Lexington","Kentucky",38.0423,-84.4587
+"316","Athens","Kentucky",37.9492,-84.3641
+"317","Oxford","Kentucky",38.2684,-84.503
+"318","Greenville","Kentucky",37.2121,-87.1764
+"319","Austin","Kentucky",36.8253,-86.0191
+"320","Chapel Hill","Kentucky",36.7198,-86.2928
+"321","Stanford","Kentucky",37.5349,-84.6606
+"322","Lexington","Oregon",45.4462,-119.688
+"323","Durham","Oregon",45.3942,-122.758
+"324","Eugene","Oregon",44.0562,-123.1172
+"325","Corvallis","Oregon",44.5697,-123.2781

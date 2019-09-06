@@ -1,0 +1,68 @@
+---
+title: "Sports Analytics Project"
+output: html_notebook
+---
+
+
+
+```{r}
+installed.packages("tree") 
+library(tree)
+nfl_data <- read_csv("CombinedRushingData.csv")
+str(nfl_data)
+names(nfl_data)
+nrow(nfl_data)
+ncol(nfl_data)
+#set.seed(2)
+select_rows <- sample(1:nrow(nfl_data),round(0.3*nrow(nfl_data)),replace=F)
+select_rows
+test <- nfl_data[select_rows,]
+nfl_data$new_column <- nfl_data$TD /nfl_data$Att
+nfl_data$new_column2 <- nfl_data$Att / nfl_data$Gms
+model_tree1 <-tree(nfl_data$new_column~Height + Weight + Run_time + Bench + Vert_leap + Broad_Jump + Shuttle + Cone_drill, data = nfl_data)
+model_tree2 <-tree(nfl_data$new_column2~Height + Weight + Run_time + Bench + Vert_leap + Broad_Jump + Shuttle + Cone_drill, data = nfl_data)
+plot(model_tree1)
+text(model_tree1)
+plot(model_tree2)
+text(model_tree2)
+pred <- predict(model_tree,newdata = test)
+pred
+```
+## Tree 1
+
+Tree number one used all 8 factors and the metric of touchdowns/attempt. We used this as a measure of the efficiency per attempt. Acording to the decision tree started by splitting the players into 2 groups based on a 40 yard dash of 4.565. If Players were slower than this the shuttle run was looked at and if they were faster the decision tree found a correlation to height. The tree produced results that make sense saying that taller and faster players will have a higher touchdown/attempt ratio. All variables were used in this tree howver only 3 variables were found important using the R package. 
+
+## Tree 2
+
+For our second decision tree, we chose to use attempts per game as our rushing metric. We felt that the number of rushing attempts gave a good idea of a running back’s value to the offense. A running back in the NFL isn’t going to get many rushing attempts, if he isn’t productive. The decision tree produced a result that is relatively intuitive with a bit of knowledge of football and of the combine. If a player weighed less than 211.5 pounds at the combine he will get 8.934 attempts/game. This makes sense because smaller running backs tend to be more in line for a receiving role rather than a rushing one. If a player weighed more than 211.5 pounds at the combine, ran below a 4.61 forty yard dash, and had a shuttle of below 4.26, he gets 15.690 carries a game. This makes sense that he has the most attempts because that player is a part of the group that is the biggest, fastest and quickest. If another player is fast ( <4.61), but isn’t as quick (<4.26) his carry total drops by over four per game to 11.220. Speed is an important measure for a running back and quickness is, as well. The running backs who weighed more than 211.5 pounds and ran slower than a 4.61 forty at the combine, also saw their attempts per game decrease to 10.220. This decision tree also shows that heavier guys get more carries, especially the running backs that had a top level combination of size, speed and quickness
+
+```{r}
+installed.packages("tree") 
+library(tree)
+nfl_data <-read.csv("~/CombinedRushingData2.csv")
+str(nfl_data)
+names(nfl_data)
+ nrow(nfl_data)
+ncol(nfl_data)
+set.seed(2)
+select_rows <- sample(1:nrow(nfl_data),round(0.3*nrow(nfl_data)),replace=F)
+select_rows
+test <- nfl_data[select_rows,]
+nfl_data$new_column <- nfl_data$TD /nfl_data$Att
+nfl_data$new_column2 <- nfl_data$Att / nfl_data$Gms
+model_tree1 <-tree(nfl_data$new_column~Height + Weight + Run_time + Shuttle + Conference, data = nfl_data)
+model_tree2 <-tree(nfl_data$new_column2~Height + Weight + Run_time + Shuttle + Conference, data = nfl_data)
+plot(model_tree1)
+text(model_tree1)
+plot(model_tree2)
+text(model_tree2)
+pred <- predict(model_tree,newdata = test)
+pred
+```
+
+## Tree 3:
+For the third tree we used the metric of Touch Downs/Attempts. The data points we chose to use were height, weight, run time, shuttle, and conference. The first decision in the tree was whether weight was greater or less then 216lbs., and then both branches check run time. The results were not what we expected because it predicts that the running backs who weigh less than 216lbs. but have slower running times would perform better which intuitively doesn’t seem to be the case. However, the case for running backs heavier than 216lbs. was the opposite and the faster running backs were predicted to have more touch downs per attempt. We believe the reason for the contradiction in how run time was evaluated was a result of having only 39 players to work with.
+
+
+## Tree 4:
+For the fourth tree we used the metric of Attempts/Games. The data points we chose to use were height, weight, run time, shuttle, and conference. The first decision in the tree was whether weight was more or less than 214.5lbs. If weight was less than 214.5lbs. the players shuttle was evaluated and then a prediction was given. If weight was more than 214.5lbs. the player had the run time checked, if it was more than 4.61 seconds the prediction was given but otherwise shuttle was checked and then a prediction was made based on shuttle. The results on this tree seemed to line up with what makes sense because no matter the weight a player being faster in either the shuttle or run time meant they had a higher predicted attempts per game. Also, the heavier running backs seemed to be favored by our tree as long as they weren’t extremely slow.

@@ -1,0 +1,102 @@
+---
+title: "Project 5"
+author: "Jacob Cathcart, Reid Motter, David Grubb"
+date: "11/6/2018"
+output: html_document
+---
+
+
+
+## Data Scraping
+
+When we first sat down and discussed what we wanted to use for our metrics we realized that we weren't basing them on any data but instead we were using anecdotal knowledge of college football. As a result we decided to base our metrics off data from previous years bowl games. We hypothesized that we could isolate the team statistics that were the greatest seperators between winning and losing teams by taking the percent differences between team statistics from a large number of bowl games and using the statistics with the highest average percent error across all games as the greatest separators. In order to do this we had to build a webscraper to collect all of the data used to compute the percent errors. Below is the python code used to do the web scraping. The first chunk is the intial scrape and the second chunk formats the data to make the R computations more simple.
+
+
+
+```{r echo=TRUE}
+## import data
+library(readxl)
+library(dplyr)
+pass_16_17 <- read_xlsx("pass_16_17.xlsx")
+win_pct_16_17 <- read_xlsx("win_pct_16.xlsx")
+turn_gain_16_17 <- read_xlsx("turn_gain_16.xlsx")
+rushing_16_17 <- read_xlsx("rushing_16_17.xlsx")
+win_pct_17_18 <- read_xlsx("win_pct_17_18.xlsx")
+rushing_17_18 <- read_xlsx("rushing_1718.xlsx")
+turn_gain_17_18 <- read_xlsx("turnover_gain_17_18.xlsx")
+pass_17_18 <- read_xlsx("passing17_18.xlsx")
+weight <- read.csv("PercentDiffMean.csv")
+```
+
+
+```{r echo=TRUE}
+# Supersetting the multiple dataframes from NCAA and adding our metric
+
+
+superset_16_17 <- merge(pass_16_17, win_pct_16_17, by = "Name") %>%
+  merge(turn_gain_16_17, by = "Name") %>%
+  merge(rushing_16_17, by = "Name")
+  
+superset_17_18 <- merge(pass_17_18, win_pct_17_18, by = "Name") %>%
+  merge(turn_gain_17_18, by = "Name") %>%
+  merge(rushing_17_18, by = "Name")
+
+names(superset_16_17) <- c("Name" ,    "PassTD" ,  "Pct" ,     "TurnGain" ,"RushYds" , "RushTD")
+names(superset_17_18) <- c("Name" ,    "PassTD" ,  "Pct" ,     "TurnGain" ,"RushYds" , "RushTD")
+
+superset_16_17 <- mutate(superset_16_17, rankscore = Pct * (.94* PassTD  + .92 *TurnGain + .74 * RushYds + 1.1 * RushTD))
+superset_17_18 <- mutate(superset_17_18, rankscore = Pct * (.94* PassTD  + .92 *TurnGain + .74 * RushYds + 1.1 * RushTD))
+```
+
+
+
+## Percent Difference and the Metric
+
+After scraping the data for the last 5 years of bowl games we then used R to compute the percent difference per game of each statatistic. We then took the mean of each percent difference from every bowl game of the last 5 years. Next we used the stats with biggest mean percent difference and the least number of N/A's to build our metric. Our metric was as follows. RankScore = Pct * (.94 * PassTD  + .92 * TurnGain + .74 * RushYds + 1.1 * RushTD). In this metric the constants are the perecnt differences of each statistic. The team with the highest score was the top ranked team, second highest score the second ranked team and so on. 
+
+## Testing Our Rankings
+
+Once we had our rankings of all the 130 teams all we had to do was compare it to the 2017 bowl game results to see how well it would have predicted the games. To find out if a rank was correct we started at the top of the rankings and looked to see how that team did in their bowl game. If they won we marked them a correct, then found their oppenent and marked them as correct. If they lost then we marked them as wrong, then foudn their oppenent and marked them as wrong. If a team in our rankings did not play in a bowl game in 2017 we makred them as na. By starting at the top and working down through the list we ensured that we were always looking at the highest ranked team we had not marked yet, so if they won they were guarenteed to be the higher ranked team. After marking all the teams we used a simple python module to sum the correct's, wrong's, and na's then compute the percentage correctly picked.
+
+
+'''
+Created on Nov 6, 2018
+
+@author: Reid Motter
+'''
+import pandas as pd
+
+df = pd.read_csv('superset_17_18.csv')  # Read the file in as a pandas data frame
+correct = 0
+wrong = 0
+na = 0
+
+for index, row in df.iterrows():
+    if row[8] == 'correct':
+        correct += 1
+    elif row[8] == 'wrong':
+        wrong += 1
+    elif row[8] == 'na':
+        na += 1
+
+# Print the results including the percent correctly picked
+print('correct: ', correct)
+print('wrong: ', wrong)
+print('na: ', na)
+print('Percent correctly picked', (correct/(correct+wrong))*100
+
+
+## Python Module Output
+
+correct:  40
+wrong:  40
+na:  50
+Percent correctly picked 50.0
+
+
+
+## Interpretting the Results
+
+We can verify that we marked the correct number of games because we marked 80 totals teams as correct/wrong, 2 for each of the 40 bowl games that were played. In the end our metrics ended up being as effective as a coin at choosing winners. Considering we took the highest percent changes and used those directly as the scalars for our metric we don't think our overall approach is bad. If were to explore this further we could see what attributes the games we wrongly predicted shared and use that knowledge to tweak our metrics.
+
+superset()
