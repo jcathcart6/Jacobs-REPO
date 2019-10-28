@@ -1,0 +1,229 @@
+---
+title: "Exam 3"
+author: "YOUR NAME"
+date: "`r Sys.time()`"
+output: html_document
+---
+
+```{r, echo=FALSE, message=FALSE}
+# Additional packages
+library(car)
+library(dplyr)
+library(ggplot2)
+library(moments)
+```
+
+### PROBLEM 1
+
+Plywood is made by gluing together several very thin sheets of wood veneer. A cross-layering process produces a strong composite. However, like any product, there is variation in the materials. Suppose a particular brand of half-inch plywood board (i.e., plywood board that is supposed to be half an inch thick) is made by layering five veneer sheets. The individual thickness of each sheet is normally distributed with a mean of 0.1 inches and a standard deviation of 0.005 inches. If the sheets are randomly and independently selected during the assembly process and the glue adds negligible thickness because of the pressure applied during the layering process, then total thickness is a random variable expressed by the following equation.
+
+board thickness = veneer sheet 1 + veneer sheet 2 + veneer sheet 3 + veneer sheet 4 + veneer sheet 5
+
+(A) Analytically determine (i.e., using mathematics) the expected value, variance, and standard deviation of the distribution of board thickness. What shape would the distribution have?
+
+```{r}
+u <- .1
+sd <- 0.005
+var <- sd^2
+
+expected <- .01 * 5
+vart <- var *5
+sdt <- sqrt(vart)
+
+print(c(expected, vart, sdt))
+
+
+
+
+
+
+
+```
+
+ANSWER (shape?):w3
+
+(B) Simulate 100,000 plywood boards by individually simulating the thicknesses of the five veneer sheets and combining them, as would happen in the physical construction process. Verify that the shape, center, and spread agree with what you found in (A).
+
+```{r}
+N <- 10^5
+
+simmeans <- numeric(N)
+simsum <- numeric(N)
+
+for(i in 1:N){
+  simsample <- rnorm(1, u, sd) + rnorm(1, u, sd) + rnorm(1, u, sd) + rnorm(1, u, sd) + rnorm(1, u, sd)
+  simmeans[i] <- mean(simsample)
+}
+
+bm <- mean(simmeans)
+bsd <- sd(simmeans)
+var <- var(simmeans)
+
+print(c(bm,bsd,var))
+  
+```
+
+(C) Suppose the company wants at least 99% of its "half-inch" plywood boards to be between 0.475 and 0.525 inches thick (inclusive). Is it meeting this goal? Use the analytical model you found in (A) to answer this question. Also find the percentage of your simulated boards that fall in the acceptable range.
+
+```{r}
+quantile(simmeans, c(.005, .995))
+
+pnorm(.525, bm, bsd) - pnorm(.475, bm, bsd)
+
+
+```
+
+ANSWER (meeting goal?): The are not meeting their goal of 99%. Only 97% fall between this range
+
+(D) Sometimes the machine that produces the veneer sheets needs to be recalibrated, so an inspector periodically selects a random sample of 100 sheets and takes the average of their thicknesses. Today's sample produced a mean of 0.0989. Would this be an unusual value, given the distribution of veneer sheets? Compute a z-score for the mean and interpret your results.
+
+```{r}
+x <- .0989
+
+
+zscore <- (x - u)/sd
+zscore >= -1 & zscore <= 1
+
+
+```
+
+ANSWER (z interpretation?): No this is not unusual 
+
+
+<hr>
+### PROBLEM 2
+
+In class we discussed a Zener card test for psychic ability. A person tries to guess the hidden symbol on cards that are presented to them one at a time. The cards are drawn with replacement from a deck containing five symbols in equal proprotions: square, circle, star, cross, and waves. Let X be the number of cards correctly identified. In the online test we took in class, getting 10 or more correct on 25 guesses was considered evidence of psychic ability. 
+
+(A) What are E(X) and Var(X)?
+
+```{r}
+n <- 25
+p <- .2
+u <- n * p
+var <- n * p * (1 - p)
+
+n*(1-p)
+
+print(c(u, var))
+
+```
+
+
+(B) If someone is randomly guessing each time, what is the probability they get 10 or more correct out of 25? Use an exact binomial calculation.
+
+```{r}
+
+pbinom(9, 25, .2, lower.tail = FALSE)
+
+```
+
+(C) Compute the probability of getting 10 or more correct out of 25 using a normal approximation. 
+
+```{r}
+
+pnorm(9, u , sqrt(var) , F)
+```
+
+(D) Compute the probability of getting 10 or more correct out of 25 using a normal approximation with continuity correction. 
+
+```{r}
+pnorm(9.5, u , sqrt(var) , F)
+```
+
+(E) When is it appropriate to use a normal approximation for a binomial random variable? Is it appropriate in this situation?
+
+ANSWER (appropriate?): It is appropriate to use a normal approximation for a binomial when is np ≥ 10 and n(1 – p) > 10. n(1-p). n(1-p) is greater than 10 but np is not so it is not appropreiate
+
+
+<hr>
+### PROBLEM 3
+
+In the late 1700s, smallpox killed about one in four children born in London. Scientists knew that inoculations (i.e., vaccines) were effective in reducing mortality, but no one was sure how they worked. Doctors often prescribed tonics to prepare patients before vaccination. Dr. William Watson became the physician for a large London orphanage 1762. Administrators were concerned about rapid spread of disease in crowded conditions and ordered vaccinations for all of the children. Watson used this chance to investigate the effectiveness of vaccine pre-treatments. Watson divided thirty-one children into three groups. 
+
+* pre-vaccination treatment of mercury and jalap (a strong laxative)
+* pre-vaccination treatment of senna and syrup of roses (a mild laxative)
+* no pre-vaccination treatment (control group)
+
+Watson observed and counted the number of smallpox lesions that appeared on each child. In general, more pocks is a sign of a more severe infection and greater chance of mortality. (data: smallpox.csv)
+
+A) Read in the dataset and use str() or glimpse() to explore its properties.
+
+```{r}
+vax <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/smallpox.csv")
+glimpse(vax)
+
+```
+
+B) Use `dplyr` functions to summarize sample size, mean, and standard deviation for the three treatments in a single table. Create a boxplot using ggplot2 to compare the three treatments. You do not need to add a title or change axis labels.
+
+```{r}
+
+vax1 <- vax %>%
+  group_by(pretreatment) 
+
+summary <- summarize(vax1, size = length(pocks), u = mean(pocks), sd = sd(pocks), pocks_df = size - 1)
+
+print(summary)
+size <- summary[2,2]
+u <- summary[2,3]
+sdx <- summary[2,4]
+pocks_df <- summary[2,5]
+
+ggplot(vax, aes(x = pretreatment, y = pocks)) +
+  geom_boxplot()
+```
+
+(C) Given the results in (B), explain why using classical confidence interval methods (i.e., t-based formulas) to estimate the population mean for any of the three groups might produce questionable results.
+
+ANSWER (why not t?): The sample size is not big enough for classical confidence interval methods to be appropriate  
+
+(D) Even though we said the results might be quesitonable, construct a t-based confidence interval to estimate the population mean for the group that received no pretreatment.
+
+```{r}
+vax2 <- vax %>% 
+  filter(pretreatment == "none")
+
+CI_LB <- mean(vax2$pocks) - qt(0.975, (length(vax2$pocks - 1))) * sd(vax2$pocks) / sqrt(length(vax2$pocks))
+CI_UB <- mean(vax2$pocks) + qt(0.975, (length(vax2$pocks - 1))) * sd(vax2$pocks) / sqrt(length(vax2$pocks))
+print(c(CI_LB, CI_UB))
+
+```
+
+(E) Construct a bootstrap sampling distribution for the mean of the group that received no pretreatment using 10,000 resamples. Make a QQ plot and compute skewness and kurtosis for the results. Do not use boot(), boot.ci(), or any similar pre-packaged bootstrapping functions. Explain how the plot and statistics verify that the sampling distribution of x-bar is *not* approximately normal.
+
+```{r}
+
+N <- 10^5
+bootmeans <- numeric(N)
+for (i in 1:N){
+  bootsample   <- sample(vax2$pocks, length(vax2$pocks), replace = TRUE)
+  bootmeans[i] <- mean(bootsample)
+}
+
+quantile(bootmeans, c(0.025, 0.975))
+
+
+skewness(bootmeans)
+kurtosis(bootmeans)
+qqPlot(bootmeans)
+```
+
+
+ANSWER (not normal?): The data is not normal based on a skewness greater than .5 and kurtosis greater than three. The qqplot supports this showing most of the points outside the range for a normal distribution 
+
+(F) Compute the mean of your bootstrap distribution. Also compute a 95% bootstrap percentile interval to estimate the population mean for the group that received no pretreatment.
+
+```{r}
+mean(bootmeans)
+
+quantile(bootmeans, c(0.025, 0.975))
+```
+
+(G) How do the two intervals differ? Which one is more reliable in this scenario?
+
+ANSWER (more reliable?):The classic interval had a much wider range and also went negative. The bootstrap interval is much smaller and more reliable because the distribution of x-bar is not normal and the sample size is small.
+
+
+<hr>
+BACON!!!

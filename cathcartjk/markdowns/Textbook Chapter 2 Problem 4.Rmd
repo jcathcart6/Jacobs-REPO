@@ -1,0 +1,67 @@
+---
+title: "Chapter 2 Problem 4"
+author: "Jacob Cathcart"
+date: "6/5/2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r echo = FALSE, message=FALSE}
+flights <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Chihara/FlightDelays.csv")
+require(dplyr)
+require(ggplot2)
+
+```
+
+
+Create a table and bar chart of the departure times (DepartTime)
+
+
+```{r}
+table(flights$DepartTime)
+
+ggplot(flights, aes(x = DepartTime)) +
+  geom_bar()
+
+```
+
+Create a contingency table of the variables Day and Delayed30. For each day, what is the proportion of flights delayed at least 30 minutes?
+
+```{r}
+test <- select(flights, Day, Delay)
+
+Delayed30 <- filter(test, Delay >= 30)
+
+summary(Delayed30$Day)
+
+ggplot(flights, aes(x = Day, fill = Delayed30)) +
+  geom_bar( position = "dodge")
+
+prop.table(table(flights$Day, flights$Delayed30),1)
+
+
+```
+
+Create side-by-side boxplots of the lengths of the flights, grouped by whether or not the flight was delayed at least 30 minutes.
+
+```{r}
+ggplot(flights, aes(x = Delayed30, y = FlightLength)) +
+  geom_boxplot(fill = "red") +
+  coord_flip()
+
+```
+
+
+```{r}
+flights %>% filter(Delayed30 == "Yes") %>%
+  summarise(LF = fivenum(FlightLength)[2]- 1.5*IQR(FlightLength), 
+  UF = fivenum(FlightLength)[4]+1.5*IQR(FlightLength))
+```
+

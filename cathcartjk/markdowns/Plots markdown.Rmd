@@ -1,0 +1,67 @@
+---
+title: "Plots"
+author: "Jacob Cathcart"
+date: "6/4/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+popular <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/popular.csv")
+ML <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/maunaloaCO2.csv")
+
+require(dplyr)
+require(ggplot2)
+
+
+```
+
+
+
+```{r}
+ggplot(popular, aes(x = top_goal)) + geom_bar(fill = "lightblue")
+```
+
+
+```{r}
+
+ggplot(popular, aes(x = top_goal, fill = gender))+ 
+  geom_bar(position = "fill") + ggtitle("Goals of kids in Pop Kids Dataset") + 
+  ylab("proportion") +
+  scale_fill_manual(values = c("blue", "pink"))   
+
+```
+
+
+
+```{r}
+numberofbins  <- sqrt(length(ML$co2raw))
+widthofbins   <- 15
+binboundaries <- seq(from = 300, to = 420, by = 10)
+
+# comparing the same variable using different bin specs
+
+ggplot(ML, aes(x = co2raw)) + geom_histogram(bins = numberofbins)
+ggplot(ML, aes(x = co2raw)) + geom_histogram(binwidth = widthofbins)
+ggplot(ML, aes(x = co2raw)) + geom_histogram(breaks = binboundaries)
+
+ggplot(ML, aes(x = co2raw)) +
+  geom_histogram(bins = numberofbins, 
+                 color = "gold",     # sets outline
+                 fill = "black")  # sets shading
+```
+
+```{r}
+numberofbins  <- sqrt(length(ML$co2raw))
+widthofbins   <- 15
+binboundaries <- seq(from = 300, to = 420, by = 10)
+ggplot(filter(ML, year >= 1960), aes(x = co2raw)) + 
+  geom_histogram(aes(y = ..density..), bins = numberofbins, fill = "lightblue") +
+  geom_density(fill = "yellow", alpha = 0.20) +
+  facet_wrap(~ decade)
+
+```
+

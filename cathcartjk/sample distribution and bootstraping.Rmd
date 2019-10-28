@@ -1,0 +1,211 @@
+---
+title: "Sampling distribution Bootstrapping"
+author: "Jacob Cathcart"
+date: "6/27/2018"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(car)
+
+X <- runif(100000, 0, 1)
+
+Y <- runif(100000, 0, 1)
+
+Q <- runif(100000, 0, 1)
+
+A <- X + Y
+
+B <- X +Y + Q
+
+```
+
+
+# What is the distribution of A/B and the probability A/B > 1.2?
+
+```{r}
+
+hist(A)
+hist(B)
+
+
+mean(A)
+var(A)
+mean( A > 1.2)
+
+
+mean(B)
+var(B)
+mean(B > 1.2)
+
+```
+
+
+# What are the boundarires of the top 5% and the middle 95%
+
+```{r}
+quantile(B, .95)
+
+quantile(B,c(.025,.975))
+
+```
+
+
+# What is the distribution of X-bar (X1, X2, X3 ~ iid UNIF(0,1))
+
+```{r}
+N <- 10^5
+n <- 3
+
+simmeans <- numeric(N)
+
+for(i in 1:N){
+  simsample <- runif(n, 0, 1)
+  simmeans[i] <- mean(simsample)
+}
+
+hist(simmeans)
+mean(simmeans)
+var(simmeans)
+
+qqPlot(simmeans)
+
+
+```
+##The shape is not normal here so we cannot use CLT or Pnorm 
+
+##So,
+
+
+```{r}
+mean(simmeans >= 0.7)
+```
+
+## What if I tried to use pnorm incorrectly?
+
+```{r}
+pnorm(.7,.5, sqrt(1/36), F)
+```
+
+## What is the distribution of X-bar (X1, X2, X3 ~ iid EXP(0,1))
+
+```{r}
+N <- 10^5
+n <- 3 
+
+simmeans <- numeric(N)
+
+for(i in 1:N){
+  simsample <- rexp(n, 1)
+  simmeans[i] <- mean(simsample)
+}
+
+hist(simmeans)
+mean(simmeans)
+var(simmeans)
+
+
+qqPlot(simmeans)
+
+```
+
+# IDK what to call this
+
+```{r}
+mlb <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/mlb2002.csv") %>% 
+  mutate( salary = salary /1000000)
+mean(mlb$salary)
+sd(mlb$salary)
+
+sampledat <- sample(mlb$salary, 10)
+mean <- mean(sampledat)
+sd <- sd(sampledat)
+
+print(mean)
+
+mean + 1.96*sd/sqrt(10)
+mean  - 1.96*sd/sqrt(10)
+
+
+qt(.025,9)
+
+
+```
+
+# Bootstraping fish examples
+
+```{r}
+FISH <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Chihara/Walleye.csv")
+
+str(FISH)
+summary(FISH)
+
+boxplot(FISH$Length)
+
+inchesmean <- mean(FISH$Length)
+inchesstdv <- sd(FISH$Length)
+inches_n   <- length(FISH$Length)
+inches_df  <- inches_n - 1
+
+# what if we do a traditional 95% CI?
+
+  CI_LB <- inchesmean - qt(0.975, inches_df) * inchesstdv / sqrt(inches_n)
+  CI_UB <- inchesmean + qt(0.975, inches_df) * inchesstdv / sqrt(inches_n)
+  print(c(CI_LB, CI_UB))
+
+# bootstrap 95% percentile interval
+  
+N <- 10^4
+bootmeans <- numeric(N)
+for (i in 1:N){
+  bootsample   <- sample(FISH$Length, inches_n, replace = TRUE)
+  bootmeans[i] <- mean(bootsample)
+}
+
+quantile(bootmeans, c(0.025, 0.975))
+
+# is the distribution approximately normal?
+hist(bootmeans)
+require(car)
+qqPlot(bootmeans)
+```
+
+## Same thing but with weight
+
+```{r}
+
+
+boxplot(FISH$Weight)
+
+
+weightmean <- mean(FISH$Weight)
+weightstdv <- sd(FISH$Weight)
+weight_n   <- length(FISH$Weight)
+weight_df  <- weight_n - 1
+
+# traditional 95% CI
+
+CI_LB <- weightmean - qt(0.975, weight_df) * weightstdv / sqrt(weight_n)
+CI_UB <- weightmean + qt(0.975, weight_df) * weightstdv / sqrt(weight_n)
+print(c(CI_LB, CI_UB))
+
+# bootstrap 95% percentile interval
+
+N <- 10^4
+bootmeans <- numeric(N)
+for (i in 1:N){
+  bootsample   <- sample(FISH$Weight, weight_n, replace = TRUE)
+  bootmeans[i] <- mean(bootsample)
+}
+
+quantile(bootmeans, c(0.025, 0.975))
+
+# is the distribution approximately normal?
+hist(bootmeans)
+require(car)
+qqPlot(bootmeans)
+
+
+```
+

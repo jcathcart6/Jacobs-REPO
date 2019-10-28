@@ -1,0 +1,237 @@
+---
+title: "Sampling Distribution"
+author: "Jacob Cathcart"
+date: "6/26/2018"
+output: html_document
+---
+
+## Age of Students Sampling Distribution Using R 
+```{r }
+
+# create the population of student ages
+# compute the true population mean mu
+
+ages <- c(234,241, 233, 227, 251, 227, 242, 239, 241, 238, 230, 246, 231, 243, 238, 276)
+mu   <- mean(ages)
+
+# sample repeatedly and plot the results
+# the histogram shape will vary slightly
+# versus the video because of bin choice
+# and random differences in simulations
+
+N <- 10^5   # number of repeated samples
+
+samplemeans <- numeric(N)
+
+for (i in 1:N){
+  samplemeans[i] <- mean(sample(ages, 3))
+}
+
+library(ggplot2)
+ggplot(NULL, aes(x = samplemeans)) +
+  geom_histogram(bins = 15, fill = "blue", color = "gray") +
+  geom_vline(xintercept = mu, color = "red")
+
+```
+
+
+
+## What about sizes other than n = 3?
+```{r}
+# set the number of simulation iterations
+# select the size of the sample to choose
+# in the video, the sample size was n = 3
+
+# How does the x-bar sampling distribution
+# change if you choose another sample size?
+
+ages <- c(234,241, 233, 227, 251, 227, 242, 239, 241, 238, 230, 246, 231, 243, 238, 276)
+
+popmean <- mean(ages)
+
+N <- 10^5
+n <- 3
+
+samplemeans <- numeric(N)
+
+for (i in 1:N){
+  samplemeans[i] <- mean(sample(ages, n))
+}
+
+library(ggplot2)
+ggplot(NULL, aes(x = samplemeans)) +
+  geom_histogram(bins = 15, fill = "blue", color = "gray") +
+  geom_vline(xintercept = popmean, color = "red")
+
+mean(samplemeans)
+var(samplemeans)
+sd(samplemeans)
+
+```
+
+
+## Sampling Distribution Calculation in R
+
+```{r }
+# the poutine population parameters
+
+mu    <- 740
+sigma <- 20
+
+# One order has least 760 calories?
+# so we are looking for P(X >= 760)
+# we do not need to find the z-score
+# we can compute directly with pnorm
+# the code shows both for comparison
+
+x <- 760
+
+pnorm(x, mu, sigma, lower.tail = FALSE)
+
+z <- (x - mu) / sigma
+pnorm(z, 0, 1, lower.tail = FALSE)
+
+# Average order has least 760 calories?
+# so we are looking for P(X-bar >= 760)
+# we do not need to find the z-score
+# we can compute directly with pnorm
+# the code shows both for comparison
+
+n <- 9
+
+pnorm(x, mu, sigma/sqrt(n), lower.tail = FALSE)
+
+z <- (x - mu) / (sigma/sqrt(n))
+pnorm(z, 0, 1, lower.tail = FALSE)
+
+# graph the individual and sampling distributions
+
+library(ggplot2)
+ggplot(NULL, aes(x = c(mu - 4 * sigma, mu + 4 * sigma))) +
+  stat_function(fun = dnorm, args = list(mu, sigma), color = "white") +
+  stat_function(fun = dnorm, args = list(mu, sigma/sqrt(n)), color = "white", linetype = "dashed") +
+  geom_vline(xintercept = x, color = "red") +
+  geom_segment(aes(x = 700, y = 0.05, xend = 715, yend = 0.012), color = "white", arrow = arrow()) +
+  geom_text(aes(x = 700, y = 0.06, label = "distribution of a single poutine"), color = "white") +
+  geom_segment(aes(x = 720, y = 0.075, xend = 738, yend = 0.062), color = "white", arrow = arrow()) +
+  geom_text(aes(x = 738, y = 0.08, label = "distribution of the mean of 9 poutines"), hjust = "right", color = "white") +
+  scale_x_continuous(breaks = c(740, 760), name = "Calories") +
+  scale_y_continuous(breaks = NULL, name = "") +
+  theme(panel.background = element_rect(fill = "black"),
+        panel.grid.minor=element_blank(), 
+        panel.grid.major=element_blank())
+
+# compare the standard deviations of the curves
+
+sigma
+sigma/sqrt(n)
+```
+
+## Exponential Distribution Simulation in R
+
+```{r}
+# the video does not indicate which exponential
+# it seems they used Exp(1) with mu = sigma = 1
+
+# plot of the population Exp(1) distribution
+
+library(ggplot2)
+ggplot(NULL, aes(x = seq(0, 6, .001))) +
+  stat_function(fun = dexp, args = list(1), color = "gray") +
+  geom_area(stat = "function", fun = dexp, args = list(1), fill = "darkgray") +
+  labs(x = "x", y = "f(x)")
+
+# samples of size n from an Exp(1) distribution
+# repeat the sampling 100,000 times and graph
+# the video explores n = 2, 4, 10, 20, and 50
+
+mu    <- 1
+sigma <- 1 
+
+N <- 10^5
+n <- 2
+
+samplemeans <- numeric(N)
+
+for (i in 1:N){
+  samplemeans[i] <- mean(rexp(n, 1))
+}
+
+library(ggplot2)
+
+ggplot(NULL, aes(x = samplemeans)) +
+  geom_histogram(aes(y = ..density..), bins = 50, fill = "darkgray", color = "gray") +
+  stat_function(fun = dnorm, args = list(1, 1/sqrt(n)), color = "red")
+```
+
+
+## Salaries Example Calculation in R
+```{r}
+# specify population mu and sigma parameters
+# the population is not normally distributed
+
+mu    <- 62000
+sigma <- 32000
+
+x     <- 66000
+n     <- 100
+
+# the sampling distribution of the mean will
+# be approximately normal because of the CLT
+# so we can use pnorm to find P(xbar > 66000)
+
+pnorm(x, mu, sigma/sqrt(n), lower.tail = FALSE)
+
+# if we did it using a z-score like the video
+
+z <- (x - mu) / (sigma/sqrt(n))
+pnorm(z, 0, 1, lower.tail = FALSE)
+```
+
+## Height Example Calculation in R
+
+```{r}
+# population height parameters for Canadians 20 - 39
+# heights within each group are normally distributed
+
+mu_M    <- 177.7
+sigma_M <- 5.6
+
+mu_F    <- 163.0
+sigma_F <- 5.1
+
+# sample sizes for each group
+
+n_M <- 20
+n_F <- 15
+
+# parameters for the sampling distribution of x-bar
+
+mu_xbar_M    <- mu_M
+sigma2_xbar_M <- (sigma_M)^2 / n_M
+print(mu_xbar_M)
+print(sigma2_xbar_M)
+
+mu_xbar_F    <- mu_F
+sigma2_xbar_F <- (sigma_F)^2 / n_F 
+print(mu_xbar_F)
+print(sigma2_xbar_F)
+
+# parameters for difference between sample means
+
+mu_diff    <- mu_xbar_M - mu_xbar_F
+sigma2_diff <- sigma2_xbar_M + sigma2_xbar_F
+print(mu_diff)
+print(sigma2_diff)
+
+# probability calculations for differences in means
+# P(xbar_M >= xbar_F + 10) or P(xbar_M - xbar_F >= 10)
+
+pnorm(10, mu_diff, sqrt(sigma2_diff), lower.tail = FALSE)
+
+zscore <- (10 - mu_diff) / sqrt(sigma2_diff)
+pnorm(zscore, 0, 1, lower.tail = FALSE)
+```
+
+
+

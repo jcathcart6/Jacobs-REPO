@@ -1,0 +1,89 @@
+---
+title: "Last Day Activity"
+author: "Jacob Cathcart"
+date: "6/27/2018"
+output: html_document
+---
+
+### PROBLEM 1
+
+In class, we worked problems 6-10 in the Sampling Distributions Part 1 practice quiz. Verify your answers using simulation.
+
+```{r}
+library(dplyr)
+N <- 10^5
+n <- 40 
+
+simmeans <- numeric(N)
+simsum <- numeric(N)
+
+for(i in 1:N){
+  simsample <- rnorm(n, 210, 25)
+  simmeans[i] <- mean(simsample)
+  simsum[i] <- sum(simsample)
+}
+
+mean(simmeans)
+var(simmeans)
+
+mean(simsample > 220)
+mean(simmeans > 220)
+
+mean(simsum > 8800)
+
+
+```
+
+### PROBLEM 2
+
+Consider the Verizon repair times dataset in the book. For the CLEC group...
+
+* find the sample mean, sample standard deviation, and smaple size
+* generate a bootstrap sampling distribution for x-bar using 10,000 resamples
+* compute the mean and standard deviation of the bootstrap distribution
+* compute a 95% percentile interval to estimate the population mean of repair times
+* compute a classical t-based 95% confidence interval 
+
+Are your interval results the same? Is the t-based approach appropriate here? Why or why not? (Note: time is in units of hours.)
+
+So you can check your work:
+
+sample mean: 16.509
+sample sd: 19.504
+sample size: 23
+bootstrap mean: about 16.509
+bootstrap sd: about 19.504 / sqrt(23)
+bootstrap interval: about (10 to 25)
+t-based interval: (8.075 to 24.943)
+We need CLT to be true to use t-based approach...
+
+```{r}
+verizon <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Chihara/Verizon.csv") %>% 
+  filter(Group == "CLEC")
+
+timemean <- mean(verizon$Time)
+timesd <- sd(verizon$Time)
+time_n <- length(verizon$Time)
+time_df  <- time_n - 1
+
+
+
+N <- 10^4
+bootmeans <- numeric(N)
+for (i in 1:N){
+  bootsample   <- sample(verizon$Time, time_n, replace = TRUE)
+  bootmeans[i] <- mean(bootsample)
+}
+
+bootstrapi <- quantile(bootmeans, c(0.025, 0.975))
+
+CI_LB <- timemean - qt(0.975, time_df) * timesd / sqrt(time_n)
+CI_UB <- timemean + qt(0.975, time_df) * timesd / sqrt(time_n)
+print(c(CI_LB, CI_UB))
+
+print(c(timemean, timesd, time_n, mean(bootmeans),sd(bootmeans),bootstrapi))
+      
+      
+
+```
+98-* 

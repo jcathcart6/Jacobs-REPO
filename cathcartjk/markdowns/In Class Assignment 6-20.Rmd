@@ -1,0 +1,172 @@
+---
+title: "In Class Assignment 6-20"
+author: "Jacob Cathcart"
+date: "6/20/2018"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(BenfordTests)
+library(ggplot2)
+pi1 <- pnorm(-2)
+pi2 <- pnorm(-1) - pnorm(-2)
+pi3 <- pnorm( 0) - pnorm(-1)
+
+
+pi4 <- pnorm(+1) - pnorm( 0)
+pi5 <- pnorm(+2) - pnorm(+1)
+pi6 <- pnorm(+2, lower.tail=F)
+
+nullprobs <- c(pi1, pi2, pi3, pi4, pi5, pi6)
+ANTHRO <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/anthropometric.csv")
+
+
+ANTHROM <- ANTHRO %>% 
+  filter(gender == "female" & height != "NA") %>% 
+  mutate(zscoreht = (height - mean(height)) / sd(height))
+
+
+
+observed <- c(sum(ANTHRO$zscoreht <= -2),
+              sum(-2 < ANTHROM$zscoreht & ANTHROM$zscoreht <= -1),
+              sum(-1 < ANTHROM$zscoreht & ANTHROM$zscoreht <=  0),
+              sum( 0 < ANTHROM$zscoreht & ANTHROM$zscoreht <= +1),
+              sum(+1 < ANTHROM$zscoreht & ANTHROM$zscoreht <= +2),
+              sum(ANTHROM$zscoreht > +2))
+names(observed) <- c("less than -2sd",
+                     "between -2sd and -1sd",
+                     "between -1sd and 0",
+                     "between 0 and +1sd",
+                     "between +1sd and +2sd",
+                     "greater than =2sd")
+print(observed)
+
+n <- sum(observed)
+
+expected <- nullprobs * n
+names(expected) <- c("less than -2sd",
+                     "between -2sd and -1sd",
+                     "between -1sd and 0",
+                     "between 0 and +1sd",
+                     "between +1sd and +2sd",
+                     "greater than =2sd")
+print(expected)
+
+chisq.test(observed, p = nullprobs)
+
+
+
+ggplot(ANTHROM, aes(x = zscoreht)) +
+  geom_density()
+
+ggplot(ANTHROM, aes(x = height)) +
+  geom_density()
+
+```
+
+
+
+```{r }
+
+
+Draft1 <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/vietnamdraft.csv")
+
+
+
+Draft <- Draft1 %>%
+  mutate(zscoredraftnum = (num1970 - mean(num1970)) / sd(num1970))
+
+observed <- c(sum(Draft$zscoredraftnum <= -2),
+              sum(-2 < Draft$zscoredraftnum & Draft$zscoredraftnum <= -1),
+              sum(-1 < Draft$zscoredraftnum & Draft$zscoredraftnum <=  0),
+              sum( 0 < Draft$zscoredraftnum & Draft$zscoredraftnum <= +1),
+              sum(+1 < Draft$zscoredraftnum & Draft$zscoredraftnum <= +2),
+              sum(Draft$zscoredraftnum > +2))
+names(observed) <- c("less than -2sd",
+                     "between -2sd and -1sd",
+                     "between -1sd and 0",
+                     "between 0 and +1sd",
+                     "between +1sd and +2sd",
+                     "greater than =2sd")
+print(observed)
+
+n <- sum(observed)
+
+expected <- nullprobs * n
+names(expected) <- c("less than -2sd",
+                     "between -2sd and -1sd",
+                     "between -1sd and 0",
+                     "between 0 and +1sd",
+                     "between +1sd and +2sd",
+                     "greater than =2sd")
+print(expected)
+
+chisq.test(observed, p = nullprobs)
+
+
+
+
+ggplot(Draft, aes(x = zscoredraftnum)) +
+  geom_density()
+
+ggplot(Draft, aes(x = num1970)) +
+  geom_density(bw = 2)
+
+
+
+```
+
+
+
+```{r}
+
+
+Draft1 <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/vietnamdraft.csv")
+
+Draft <- Draft1 %>%
+  filter(halfyear == "First") %>%
+  mutate(zscoredraftnum = (num1970 - mean(num1970)) / sd(num1970))
+
+observed <- c(sum(Draft$zscoredraftnum <= -2),
+              sum(-2 < Draft$zscoredraftnum & Draft$zscoredraftnum <= -1),
+              sum(-1 < Draft$zscoredraftnum & Draft$zscoredraftnum <=  0),
+              sum( 0 < Draft$zscoredraftnum & Draft$zscoredraftnum <= +1),
+              sum(+1 < Draft$zscoredraftnum & Draft$zscoredraftnum <= +2),
+              sum(Draft$zscoredraftnum > +2))
+names(observed) <- c("less than -2sd",
+                     "between -2sd and -1sd",
+                     "between -1sd and 0",
+                     "between 0 and +1sd",
+                     "between +1sd and +2sd",
+                     "greater than =2sd")
+print(observed)
+
+n <- sum(observed)
+
+expected <- nullprobs * n
+names(expected) <- c("less than -2sd",
+                     "between -2sd and -1sd",
+                     "between -1sd and 0",
+                     "between 0 and +1sd",
+                     "between +1sd and +2sd",
+                     "greater than =2sd")
+print(expected)
+
+chisq.test(observed, p = nullprobs, simulate.p.value = TRUE)
+
+# note that the plots have the same shape
+# linear transformations preserve shape!
+
+library(ggplot2)
+
+ggplot(Draft, aes(x = zscoredraftnum)) +
+  geom_density()
+
+ggplot(Draft, aes(x = num1970)) +
+  geom_density()
+
+
+
+```
+

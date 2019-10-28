@@ -1,0 +1,460 @@
+---
+title: "Exam 2 "
+author: "YOUR NAME HERE"
+date: "`r Sys.time()`"
+output: html_document
+---
+
+**INSTRUCTIONS** 
+
+* Do not print out entire datasets!
+
+* Use `ggplot` for all plotting (other than qqPlot).
+
+* Put appropriate descriptive titles and  labels on all plots. 
+
+* Do not include extraneous code; use only what is needed for the problem.
+
+* Type non-code answers where you see ANSWER, not as comments in the code. 
+
+HINT: The keyboard shortcut to insert a pipe is CTRL + SHIFT + M (or CMD + SHIFT + M).
+
+```{r, echo=FALSE, message=FALSE}
+# Additional packages
+library(car)
+library(dplyr)
+library(ggplot2)
+library(moments)
+library(BenfordTests)
+
+# Load datasets here
+gayweed <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/mmFEB2015.csv")
+mlb02OG <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/mlb2002.csv")
+flightsOG <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Chihara/FlightDelays.csv")
+weatherdelays <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/wcsweatherdays.csv")
+```
+
+### PROBLEM 1
+
+A February 2014 [Vox article](https://www.vox.com/2014/11/7/7169501/same-sex-marriage-marijuana-legalization-midterm-election-2014) addressed the intersection of U.S. states that (at the time) allowed gay marriage and some form of legal marijuana use. Were those two issues (allowing gay marriage or not, allowing marijuana use or not) independent of one another? (data: mmFEB2015.csv)
+
+(A) Create a contingency table to explore the relationship between these two variables. 
+
+```{r}
+table(gayweed$marriage, gayweed$marijuana)
+prop.table(table(gayweed$marriage, gayweed$marijuana))
+```
+
+(B) Create a barplot to explore the relationship between these two variables. 
+
+```{r}
+ggplot(gayweed, aes(x = marijuana, fill = marriage)) +
+  geom_bar() +
+  ggtitle("Relationship between States Marriage and Marijuana Laws ")
+
+```
+
+(C) Conduct a classical chi-square test of independence using R's `chisq.test` function (set the parameter `correct = FALSE` to turn off the Yates correction).
+
+```{r}
+chisq.test(table(gayweed$marriage, gayweed$marijuana), correct = FALSE)
+
+```
+
+(D) Conduct a permutation test of independence. Print both the test statistic and the p-value. You do not have to plot your simulation results.
+
+```{r}
+
+
+
+
+
+chisq<-function(Obs){ 
+  Exp <- outer(rowSums(Obs),colSums(Obs))/sum(Obs)
+  sum((Obs-Exp)^2/Exp)
+}
+
+
+Observed <- table(gayweed$marriage, gayweed$marijuana)
+
+testStatistic <- chisq(Observed)
+
+Expected <- outer(rowSums(Observed),colSums(Observed))/sum(Observed)
+
+weed <- gayweed$marijuana
+marriage <- gayweed$marriage
+set.seed(1)
+alpha <- .05
+N <- 10^4-1
+
+randomChisq<-numeric(N)
+
+for (i in 1:N){
+  weedPerm <-sample(weed)
+  randomTable <- table(marriage, weedPerm)
+  randomChisq[i]<-chisq(randomTable)
+}
+
+pvalue <- (sum(randomChisq >= testStatistic) + 1) / (N + 1)
+print(paste("The chi-square test statistic is ", round(testStatistic, 4), ".", sep=""), quote = F)
+print(paste("The p-value for the test of independence is ", format(pvalue, scientific = F), ".", sep=""), quote=F)
+  
+
+```
+
+(E) Based on the permutation test, can you reject the null hypothesis at the &alpha; = 0.05 level of significance? If you reject the null hypothesis, use your exploratory data analysis in (A) and (B) to discuss the relationship between legal gay marriage and legal marijuana use.
+
+ANSWER: The permutation test gave a pvalue of .0022 which is less than the chosen alpha giving evidence to reject the null hypothesis
+
+(F) Are the results in (C) and (D) consistent with one another (i.e., test statistics, p-values, conclusions)? What assumption must be met for the classical test that is not required for the permutation test?
+
+ANSWER: The results are consistent with one another among all three variables (test statistic, p-values, and conclusions)
+For the chisq.test() the numbers must be big enough where in the permutation test this isnt neccesary.
+
+<hr>
+### PROBLEM 2
+
+In 2002, the New York Yankees had the highest average team salary among all MLB teams. However, was it statistically larger than the average salary of the rest of the teams in the league combined? (data: mlb2002.csv)
+
+(A) Use the `mutate` and `ifelse` functions to add a new variable to the dataset that identifies players according to whether they played for the New York Yankees (NYY) or some other team (OTH). Then use the `summarize` function to find n, mean, and standard deviation for salary in each group (NYY versus OTH). 
+
+```{r}
+mlb02 <- mlb02OG %>% 
+  mutate(yankees = ifelse(team == "New York Yankees", "NYY", "OTH"), na.rm = TRUE) %>% 
+  group_by(yankees)
+
+summary <- summarize(mlb02, n = mean(salary), sd = sd(salary) )
+print(summary)
+
+
+```
+
+(B) Create a boxplot to compare the NYY and OTH groups. 
+
+```{r}
+ggplot(mlb02, aes(x = yankees, y = salary) ) + 
+  geom_boxplot()
+
+```
+
+(C) Conduct a permutation test to determine whether the Yankees' mean was statistically larger than the mean of the rest of the league. You do not have to plot your simulation results.
+
+```{r}
+teststat <- diff(summary$n)
+print(teststat)
+
+
+salarys   <- mlb02$salary
+  
+
+
+n_all          <- length(salarys)
+n_yanks      <- as.numeric(filter(mlb02, yankees == "NYY") %>% 
+                              summarize(length(salary)))
+
+print(n_yanks)
+
+
+
+
+
+alpha <- .05
+
+N <- 10^5-1
+
+diffs <- numeric(N)
+
+
+
+
+for(i in 1:N){
+  index <- sample(n_all, 29)
+  diffs[i] <- mean(salarys[index]) - mean(salarys[-index])
+  }
+
+
+
+ggplot(data.frame(nulldist = diffs), aes(x = nulldist)) +
+  geom_histogram(fill = "black") +
+  geom_vline(xintercept = -1 * abs(teststat), color = "red") +
+  geom_vline(xintercept = abs(teststat), color = "red")
+
+
+
+pLower <- sum(diffs <= -1*abs(teststat))
+pupper <- sum(diffs >= abs(teststat))
+
+pvalue <- (pLower + pupper + 1) / (N + 1)
+print(pvalue)
+
+
+sprintf("The pvalue is %1.5f.", pvalue)
+
+
+```
+
+(D) Conduct a classical two-sample t-test for the same hypotheses using R's `t.test` function.
+
+```{r}
+
+t.test(mlb02$salary, mu = teststat)
+
+```
+
+(E) Based on the results of the permutation test, can we conclude at the &alpha; = 0.05 level of significance that the Yankee's mean was statistically larger than the average salary of the rest of the teams in the league combined? If so, does the difference large enough to have practical significance, in context?
+
+ANSWER:  Yes the Pvalue of 0.00102 gives great evidence to reject the null hypsothesis yankees's mean was statistically larger than the average salary of the rest of the leagueo
+
+(F) Given the classical two-sample t-test assumptions, why might the p-value from the test in (D) be unreliable for these data?
+
+ANSWER: The p-value may be unreliable because t.test assumes that the data is normally distributed
+
+
+<hr>
+### PROBLEM 3
+
+Consider the flight delays dataset we have worked with in class. Use the information in the Delay variable and conduct a permutation test to determine whether the two carriers have different proportions of flights that are delayed (i.e., that depart late). Use the &alpha; = 0.05 to make your decision. If you do not reject the null hypothesis, report the overall proportion of flights that leave late. If you reject the null hypothesis, discuss the difference between the carriers. You do not have to plot your simulation results.
+
+```{r}
+
+flights <- flightsOG %>% 
+  mutate(isdelayed = Delay > 0, na.rm = TRUE) %>% 
+  group_by(Carrier)
+
+summary <- summarize(flights,propdelayed = mean(isdelayed))
+print(summary)
+
+
+teststat <- diff(summary$propdelayed)
+
+delayed <- flights$isdelayed
+
+n_all   <- length(flights$ID)
+n_UA   <- as.numeric(filter(flights, Carrier == "UA") %>% 
+                               summarize(length(Carrier)))
+
+
+alpha <- .05
+
+set.seed(1)
+
+N <- 10^5-1
+
+
+randomDiffs <- numeric(N)
+
+for(i in 1:N){
+  index <- sample(n_all, 1123)
+  randomDiffs[i] <- mean(delayed[index]) - mean(delayed[-index])}
+  
+
+
+pLower <- sum(randomDiffs <= -1*abs(teststat))
+pupper <- sum(randomDiffs >= abs(teststat))
+pvalue <- (pLower + pupper + 1) / (N + 1)
+print(pvalue)
+
+
+
+
+
+
+
+
+
+```
+
+ANSWER: With a pvalue much less than .05 (.00005) we reject the null hypothesis that on the proportion of delayed flights between carriers are the same. It seems on average United Airlines has a higher proportion of delayed flights.
+
+
+<hr>
+### PROBLEM 4
+
+Watauga County Schools frequently closes for inclement weather days. Missed days have to be made up later in the year. What is the distribution of total days missed? (data: wcsweatherdays.csv)
+
+(A) Make a histogram of total. What shape does the variable seem to have?
+
+```{r}
+
+ggplot(weatherdelays, aes(x = total)) +
+  geom_histogram(fill = "lightblue") +
+  xlab("Total") +
+  ggtitle("Number of Days Missed in a given year")
+  
+
+```
+
+ANSWER: The variable seems like it could be normal
+
+(B) For the total number of missed days per year, compute the upper fence for outliers.
+
+```{r}
+
+fivenum <- fivenum(weatherdelays$total)
+iqr <- IQR(weatherdelays$total)
+lower = fivenum[2] - 1.5 * iqr
+upper = fivenum[4] + 1.5 * iqr
+
+cat("Lower Fence =", lower, "Upper Fence =", upper)
+
+
+
+```
+
+(C) Filter the dataset and print out only the data for the years that are outliers.
+
+```{r}
+weatherdelays2 <- weatherdelays %>% 
+  filter(total >= upper) %>% 
+  print()
+
+
+```
+
+(D) Filter the dataset to remove the outliers. Now assess total for normality using...
+
+* skewness and kurtosis 
+* density, ECDF, and QQ plots 
+* chi-square goodness-of-fit test
+```{r}
+weatherdelays3 <- weatherdelays %>% 
+  filter(total <= upper)
+
+m <- mean(weatherdelays3$total)
+sd <- sd(weatherdelays3$total)
+
+weatherdelays3 %>% summarize(skew = skewness(total),
+                   kurt = kurtosis(total))
+
+ggplot(weatherdelays3, aes(x = total)) +
+  geom_density() +
+  ggtitle("Density Plot of Total Days Missed") +
+  xlab("Days Missed") +
+  ylab("Density")  +
+  stat_function(fun = dnorm, args = list(m, sd), color = "red")
+
+ggplot(weatherdelays3, aes(x =total)) +
+  stat_ecdf() +
+  stat_function(fun = pnorm, args = list(m, sd), color = "red")
+ 
+ggplot(weatherdelays3, aes(sample = total)) +
+  geom_qq() +
+  geom_qq_line(color = "red")
+
+qqPlot(weatherdelays3$total, id = FALSE)
+
+weatherdelays4 <- weatherdelays3 %>% 
+  mutate(zscore = (total - mean(total)) / sd(total))
+
+pi1 <- pnorm(-2)
+pi2 <- pnorm(-1) - pnorm(-2)
+pi3 <- pnorm( 0) - pnorm(-1)
+pi4 <- pnorm(+1) - pnorm( 0)
+pi5 <- pnorm(+2) - pnorm(+1)
+pi6 <- pnorm(+2, lower.tail=F)
+
+normprobs <- c(pi1, pi2, pi3, pi4, pi5, pi6) 
+print(normprobs)
+
+observed <- c(sum(weatherdelays4$zscore <= -2),
+              sum(-2 < weatherdelays4$zscore & weatherdelays4$zscore <= -1),
+              sum(-1 < weatherdelays4$zscore & weatherdelays4$zscore <=  0),
+              sum( 0 < weatherdelays4$zscore & weatherdelays4$zscore <= +1),
+              sum(+1 < weatherdelays4$zscore & weatherdelays4$zscore <= +2),
+              sum(weatherdelays4$zscore > +2))
+
+print(observed)
+n <- sum(observed)
+
+expected <- normprobs*n
+
+chisq.test(observed, p = normprobs, simulate.p.value = TRUE)
+
+```
+
+
+
+(E) With the outliers removed, can we consider the distribution of total number of inclement weather days to be 
+approximately normally? Support your answer with evidence from (D ). 
+
+ANSWER: The snowday weather data has a skewness level of .265 and a kurtosis level of 2.53 which suggests slight skew but shows the data is still relativly normal, and this is backed up by the density, ECDF, and QQ plots which show that the data follows a normal distribution fairly closley. Using the Chi Squared goodness of fit test with the null hypothesis being the data follows a normal distribution and an alternative hypothesis that the data does not follow normal distribution. With a p value of 0.8456 we have strong evidence against the null hypothesis
+
+
+<hr>
+### PROBLEM 5
+
+Let's come back to baseball salaries for a moment. Do the first digits of the salaries of Major League Baseball players in 
+2002 follow the Benford distribution?
+
+(A) Find the tables of observed and expected counts.
+
+```{r}
+mlb02firstdig <- mlb02OG %>% 
+  mutate(firstdigitsal = signifd(salary, 1))
+observed <- table(mlb02firstdig$firstdigitsal)
+print(observed)
+
+
+n <- sum(observed)
+firstdigit   <- 1:9
+benfordprobs <- log10(1+1/firstdigit)
+
+expected <- benfordprobs * n
+print(expected)
+
+mlb200000 <- mlb02OG %>% 
+  filter(salary == 200000)
+str(mlb200000)
+```
+
+(B) Use the `chisq.test` function to conduct a goodness of fit test.
+
+```{r}
+chisq.test(observed, p = benfordprobs, simulate.p.value = TRUE) 
+
+```
+
+(C) What can you conclude from (B)? Consider that the MLB league minimum salary in 2002 was $200,000. How would that help explain the results of your test?
+
+ANSWER: The results from the chi squared test show that the salaries from 2002 do not follow a benford distribution. The majority of first digits were 2s which makes sense in the context of 2002 where the minimum salary was 200000 and 45 people made 200000 so there will be more 2s than a typical benford distribution.
+
+<hr>
+### PROBLEM 6
+
+In class we discussed a Zener card test for psychic ability. A person tries to guess the hidden symbol on cards that are presented to them one at a time. The cards are drawn with replacement from a deck containing five symbols in equal proprotions: square, circle, star, cross, and waves. In the online test we took in class, getting 10 or more correct on 25 guesses was considered evidence of psychic ability. 
+
+(A) If someone is randomly guessing each time, what is the probability they get 10 or more correct out of 25?
+
+```{r}
+a <- pbinom(10,25, .2, lower.tail = FALSE)
+print(a)
+```
+
+(B) Suppose the number of trials in the test was increased to 100 instead of 25. If we want the probability to be as close as possible to (A), how many correct guesses out of 100 would be considered evidence of psychic ability? 
+
+```{r}
+x <- 1:100
+correctguesses <- data.frame(guess = x, prob = round(pbinom(x, 100, .2, lower.tail = FALSE), digits = 5)) %>%
+  filter(prob <= a)
+print.data.frame(correctguesses)
+```
+ANSWER: 31 guesses
+
+
+(C) If someone has some degree of psychic ability, then their chance of guessing correctly on each trial should be better than someone who is randomly guessing. Consider probabilities ranging from 0.2 to 0.9, in increments of 0.1. Create a plot that shows p = chance of guessing correctly on each trial (x axis) versus the probability of getting 10 or more cards correct out of 25 (y axis).
+
+```{r}
+X <- seq(0.2, .9, .1)
+correctguesses <- data.frame(guessprob = X, prob = round(pbinom(10, 25, X, lower.tail = FALSE), digits = 5))
+
+ggplot(correctguesses,aes(x = guessprob, y = prob)) +
+  geom_line() +
+  xlab("Probability of Guessing 10 or More") +
+  ylab("Probability of Guessing 1 Correctly ")
+
+
+```
+
+
+<hr>
+BACON!!!

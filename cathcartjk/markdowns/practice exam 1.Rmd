@@ -1,0 +1,197 @@
+---
+title: "Exam 1 Practice Problems"
+author: 'Created by: Jill Thomley'
+date: 'Updated: `r format(Sys.time(), "%A, %B %d, %Y @ %X")`'
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+```
+
+  ### Problem 1
+  
+  Back in Ye Olden Tymes, 5.25" floppy disks produced by Disks R Us had a 1% chance of being defective, with each disk's risk independent of the others. Disks were sold in packs of 10. Take a time machine back...
+
+(a) The company offers a money-back guarantee that at most 1 disk in a pack will be defective. Any pack that exceeds this amount can be returned for a full refund. What is the chance that you buy only one pack and qualify for a refund?
+
+```{r}
+prob <- pbinom(8,10,.99)
+print(prob)
+
+```
+
+(b) Suppose you bought 10 packs of disks. Each pack is independent of the others. What is the chance that you could claim a refund on more than one pack?
+
+```{r}
+pbinom(2, 10, prob, lower.tail = FALSE)
+```
+
+(c) A quality-control inspector is randomly sampling and testing disks as they come off the assembly line. What is the probability that he has to sample no more than 10 disks to get his first defective one?
+
+```{r}
+dbinom(1,10,.01)
+
+```
+
+
+### Problem 2
+
+The author of an April 2014 blog article about actor Tom Hardy said, "Ever since I read a description of what Tom Hardy really looks like... I can't stop thinking about how small he is in real life." Previously, some people cited concerns about his size when the 5'9" actor was cast to play Bane in The Dark Knight Rises. Given our data, would you agree that Tom Hardy is "small"? Assume for this question that our male student data is generally representative of adult males. (data: anthropometric.csv)
+
+```{r, message = FALSE}
+ANTHRO <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/anthropometric.csv")
+
+
+antmale <- filter(ANTHRO, gender == "male")
+
+print(antmale)
+ggplot(antmale, aes(x = 1, y = height)) + 
+  geom_boxplot() + geom_hline(yintercept  = 69, color = "red")
+```
+
+ANSWER: According to the data I would say Tom Hardy is a a typical height because he falls within the IQR for male height
+
+
+### Problem 3
+
+In March 2015, Associated Press predicted that the average Major League Baseball salary for the 2015 season would exceed 4 million dollars---wow! This is quite a contrast to the situation approximately forty years ago. In 1976, the last year before free agency was permitted, the average MLB salary was $50,000. [[Reference](https://sports.yahoo.com/news/ap-newsbreak-ap-study-projects-average-mlb-salary-195146311--mlb.html)] However, the average doesn't tell the whole story.
+
+```{r}
+MLB2002 <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/mlb2002.csv")
+MLB2013 <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/mlb2013.csv")
+```
+
+a) Currently, salary values in both data sets are expressed in units of dollars. Create new variables to re-express the salaries in units of millions of dollars. For example, if a player has a salary of $1,200,000, this would be expressed as 1.2 in the transformed vectors. Use these transformed vectors for all subsequent parts of this problem.
+
+```{r comment=""}
+MLB02 <-  mutate(MLB2002, salaryM = round(salary / 1000000, digits = 1))
+
+MLB13 <-  mutate(MLB2013, salaryM = round(salary / 1000000, digits = 1))
+
+
+
+```
+
+b) On average, which team paid its players the least in 2002? in 2013?
+
+```{r comment=""}
+
+MLB02 %>%
+  group_by(team) %>%
+  summarize(avg = mean(salaryM)) %>%
+  arrange(avg)
+
+MLB13 %>%
+  group_by(team) %>%
+  summarize(avg = mean(salaryM))  %>%
+  arrange(avg)
+  
+  
+```
+
+c) Make a boxplot of each season's salaries.
+
+```{r}
+ggplot(MLB02,aes(x = team, y = salaryM)) +
+  geom_boxplot() +coord_flip()  + labs(x = "Team", y = "Salary In Millions") + ggtitle("MLB in 2002")
+
+ggplot(MLB13,aes(x = team, y = salaryM)) +
+  geom_boxplot() +coord_flip() + labs(x = "Team", y = "Salary In Millions") +ggtitle("MLB in 2013")
+
+
+```
+
+d) What is the upper cutoff (fence) for outliers in each season? How many outliers are there in each season and what percentage of players does that represent?
+
+```{r comment=""}
+upper02 <- fivenum(MLB02$salaryM)[4] + 1.5 * IQR(MLB02$salaryM)
+print(upper02)
+                                          
+
+upper13 <- fivenum(MLB13$salaryM)[4] + 1.5 * IQR(MLB13$salaryM)
+print(upper13)
+filter(MLB02, salaryM > upper02) %>%
+  summarize(outliers = n())
+
+filter(MLB13, salaryM > upper13) %>%
+  summarize(outliers = n())
+
+
+```
+
+e) If we consider IQR, which season had greater variability in player salaries?
+
+```{r comment=""}
+IQR(MLB02$salaryM)
+IQR(MLB13$salaryM)
+
+
+```
+
+ANSWER: According to the IQR the salaries in the 2002 season had a greater variability 
+
+f) If we consider SD, which season had greater variability in player salaries?
+
+```{r comment=""}
+
+sd(MLB02$salaryM)
+sd(MLB13$salaryM)
+
+```
+
+ANSWER: Accoring to the standard deviation the 2013 season had a greater variablity 
+
+g) If we consider range, which season had greater variability in player salaries?
+
+```{r comment=""}
+range(MLB02$salaryM)
+range(MLB13$salaryM)
+
+```
+
+ANSWER: Accoring to the range the 2013 season had a greater variability 
+
+h) One of your answers in (e)-(g) should be different than the other two. Why do the different measures of variability lead to different conclusions?
+
+ANSWER:
+
+
+<hr>
+
+### Problem 4
+
+Anthropometric data is collected and studied in a wide variety of contexts. For example, there is a researcher here at ASU who is currently conducting anthropometric studies on female athletes. The field of Human Factors and Ergonomics is concerned with designing products, systems, and processes that take account the physical and psychological characteristics of human beings and how we interact with our environment. The Anthropometric case study on AsULearn discusses Adolphe Quetelet, who was interested in describing the "average man" and linking certain traits to his studies in psychology and criminal justice. 
+
+```{r}
+ANTHRO <- read.csv(file = url("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/anthropometric.csv"))
+```
+
+a) What proportion of the sample self-identified as male?
+
+```{r comment=""}
+mean(ANTHRO$gender == "male")
+
+```
+
+b) Based on our data, what would Quetelet's "average man" look like? Use only data from self-identified male students data and include height, armspan, forearm, hand, leg, and foot. 
+
+```{r}
+
+```
+
+c) The Hybrid III 50th Male Dummy is a front-impact crash test dummy is designed using the 50th percentile of U.S. male height, weight, and other physical measurements (i.e., it's another kind of "average man"). For more than 30 years, the majority of standard vehicle safety ratings were based exclusively on tests using this "average" male model. Eventually, concerns about its representativeness for the broader population of drivers led to the development of a 5th percentile front-impact female dummy in 1988. Based on our data, what would she look like? Use only self-identified female data and include height, armspan, forearm, hand, leg, and foot. Format your values in a table.
+
+```{r}
+
+```
+
+d) Create overlapping desnity plots to compare self-identified male and female heights.
+
+```{r}
+
+```

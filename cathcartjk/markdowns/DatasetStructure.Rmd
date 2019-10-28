@@ -1,0 +1,136 @@
+<hr>
+
+Read in each dataset using the `read.csv` function and use the following functions to explore its structure. You can find all the data on our [class dataset list](https://stat-jet-asu.github.io/Datasets/DatasetList.html). The flight delays and Verizon datasets are from the textbook, the rest are instructor datasets.
+
+* `str`
+* `glimpse`
+* `summary`
+* `head` to show three rows of the datset
+* `sum` and `complete.cases` to find the number of rows that contain NA's
+
+```{r, message=FALSE, warning=FALSE}
+require(dplyr)
+```
+
+
+### Annual Inflation Data
+
+```{r}
+inflation <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/annualinflation.csv")
+str(inflation)
+glimpse(inflation)
+summary(inflation)
+head(inflation)
+sum(complete.cases(inflation))
+```
+
+
+### Anthropometric Data
+
+```{r}
+anthro <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/anthropometric.csv")
+str(anthro)
+glimpse(anthro)
+summary(anthro)
+head(anthro)
+sum(complete.cases(anthro))
+```
+
+
+### Flight Delays Data
+
+```{r}
+flightdelays <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Chihara/FlightDelays.csv")
+str(flightdelays)
+glimpse(flightdelays)
+summary(flightdelays)
+head(flightdelays)
+sum(complete.cases(flightdelays))
+```
+
+
+### Mauna Loa CO2 Data
+
+```{r}
+maunaloa <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/maunaloaCO2.csv")
+str(maunaloa)
+glimpse(maunaloa)
+summary(maunaloa)
+head(maunaloa)
+sum(complete.cases(maunaloa))
+```
+
+
+### STT3850 Personality Data
+
+```{r}
+personality <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/personalitySTT3850.csv")
+str(personality)
+glimpse(personality)
+summary(personality)
+head(personality)
+sum(complete.cases(personality))
+```
+
+
+### Popular Kids Data
+
+```{r} 
+popularkids <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/popular.csv")
+str(popularkids)
+glimpse(popularkids)
+summary(popularkids)
+head(popularkids)
+sum(complete.cases(popularkids))
+```
+
+
+### Powerball Jackpot Data
+
+```{r}
+loto <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/powerballjackpot.csv")
+str(loto)
+glimpse(loto)
+summary(loto)
+head(loto)
+sum(complete.cases(loto))
+```
+
+
+### Smallpox Data
+
+```{r}
+smallpox <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/smallpox.csv")
+str(smallpox)
+glimpse(smallpox)
+summary(smallpox)
+head(smallpox)
+sum(complete.cases(smallpox))
+```
+
+
+### Verizon Repair Times Data
+
+```{r}
+verizonrepairtime <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Chihara/Verizon.csv")
+str(verizonrepairtime)
+glimpse(verizonrepairtime)
+summary(verizonrepairtime)
+head(verizonrepairtime)
+sum(complete.cases(verizonrepairtime))
+```
+
+
+### Watauga County Schools Weather Data
+
+```{r}
+weather <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/wcsweatherdays.csv")
+str(weather)
+glimpse(weather)
+summary(weather)
+head(weather)
+sum(complete.cases(weather))
+```
+
+
+

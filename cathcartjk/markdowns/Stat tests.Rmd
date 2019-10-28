@@ -1,0 +1,458 @@
+---
+title: "Stat tests"
+author: "Jacob Cathcart"
+date: "6/19/2018"
+output: html_document
+---
+
+
+
+Permutation Test for Two Means
+```{r}
+# Permutation Test for Two Means
+# One-tailed test for the 1970 the Vietnam draft lottery data
+# Did the second half of the year have lower average draft numbers?
+
+# Ho: mu_second = mu_first
+# Ha: mu_second < mu_first
+
+DRAFT <- read.csv(file=url("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/vietnamdraft.csv"))
+
+# Descriptive analysis of the two groups
+# Remember that the sample mean is x-bar
+# Also be sure to check for any NA values!
+library(ggplot2)
+
+DRAFT <- utate(DRAFT, isless195 = num1970 <= 195)
+
+
+summary <- DRAFT %>% 
+  group_by(halfyear) %>%
+  summarize(n    = n(),
+            xbar = mean(num1970),
+            s    = sd(num1970)
+            )
+
+print(summary)
+print.data.frame(summary)
+
+ggplot(DRAFT, aes(x = halfyear, y = isless195)) + 
+  geom_boxplot() +
+  ggtitle("Draft Numbers by Half-Year for 1970") +
+  ylab("draft number")
+
+ggplot(filter(DRAFT, halfyear == "First"), aes(sample = num1970)) +
+  geom_qq() +
+  geom_qq_line(color = "red")
+
+ggplot(filter(DRAFT, halfyear == "Second"), aes(sample = num1970)) +
+  geom_qq() +
+  geom_qq_line(color = "red")
+
+# Compute the observed difference in means in the dataset.
+# Observed difference is called the TEST STATISTIC for Ho.
+# We can use the diff() function on our vector of x-bars.
+# Using diff() subtracts takes each vector element and
+# subtracts the element before, so here xbar2 - xbar1.
+# So we get x-bar (second half) - x-bar (first half).
+# What does the sign of the test statistic tell you?
+
+testStatistic <- diff(summary$xbar)
+print(testStatistic)
+
+# Select the variable you want to test, be careful of NA values.
+# You will need to remove NA values if there are any and adjust.
+# The vector is the observed values of the variable being tested.
+# In this case, we are testing 1970 draft numbers between groups.
+# We need to know the total number of data values and the number
+# of data values in the group designated Group 1 (here "Second").
+# We use as.numeric() to turn the tibble into a numeric vector.
+
+draftnumbers   <- DRAFT$num1970
+
+draftnumberp <-  DRAFT$isless195
+n_all          <- length(draftnumbers)
+n_second       <- as.numeric(filter(DRAFT, halfyear == "Second") %>% 
+                               summarize(length(num1970)))
+
+
+# Uncomment the seed command below to get reproducible results.
+# Otherwise each simulation iteration generates unique results.
+
+# set.seed(0)
+
+# Conduct the resampling procedure for N simulation iterations.
+# All of the commands included between the { } repeat N times.
+# The vector randomDiffs stores the SIMULATED NULL DISTRIBUTION 
+#     for test statistic XBAR1 - XBAR2; each randomDiffs entry
+#     is computed the same as the test statistic from the data.
+# The data are randomly permuted into the two comparison groups.
+# The vector "index" is the data locations chosen to be "First".
+# The vector "-index" is un-selected values left to be "Second".
+# In the textbook the randomDiffs vector is often called result.
+# Start the resampling process!
+
+# Set level of rejection for the null hypothesis.
+
+alpha <- .05
+
+# Set the number of iterations for the simulation.
+# Why the -1? The actual data is one of the possible 
+# permutations, so we conduct one fewer simulations.
+
+N <- 10^5-1
+
+# Create a vector to store the simulation results.
+randomDiffs <- numeric(N)
+
+# Aaaaaaaaaaaaaaaaaaaaaaaaaaaaand let's simulate!
+
+
+for(i in 1:N){
+  index <- sample(n_all, n_second)
+  randomDiffs[i] <- mean(draftnumbers[index]) - mean(draftnumbers[-index])}
+  
+
+# Display resampling results (null distribution) as a histogram.
+# Plot the observed difference on the null dist. for comparison.
+
+library(ggplot2)
+ggplot(data.frame(nulldist = randomDiffs), aes(x = nulldist)) +
+  geom_histogram(fill = "black") +
+  geom_vline(xintercept = -1 * abs(testStatistic), color = "red") +
+  geom_vline(xintercept = abs(testStatistic), color = "red")
+
+
+
+# The p-value is the fraction of results less than testStatistic.
+# Remember, Ha: mu_second < mu_first so it's a lower-tailed test.
+# Why the +1? Because the actual data is one possible permutation.
+# Using it as one of our values prevents a p-value equal to zero.
+
+pLower <- sum(randomDiffs <= -1*abs(testStatistic))
+pupper <- sum(randomDiffs >= abs(testStatistic))
+pvalue <- (pLower + pupper + 1) / (N + 1)
+print(pvalue)
+
+# We can add some logic to help us make our decision, using alpha.
+sprintf("The p-value for Ho: mu1 = mu2 vs. Ha: mu1 < mu2 is %1.5f.", pLower)
+ifelse(pvalue <= alpha, sprintf("Reject Ho."), sprintf("Do not reject Ho."))
+
+
+```
+
+Chi Squared test for POP kids data comparing gender and top goal
+```{r} 
+POP <- read.csv(file=url("https://raw.githubusercontent.com/STAT-JET-ASU/Datafiles/master/Instructor/popular.csv"))
+# Chi-Square Test of Independence
+# Looking at the Popular Kids data
+# Are gender and goal independent?
+
+# Create a new function to compute the chi-squared test statistic
+# The function's name is chisq, the required input is a data table 
+# Obs(erved) is the observed data table; variables are defined later
+# Exp(ected) is a contingency table computed from the Observed data
+# Outer is the outer product of two vectors, which makes a matrix
+# http://en.wikipedia.org/wiki/Outer_product
+# http://calculator.vhex.net/calculator/linear-algebra/outer-product
+
+
+addmargins(table(POP$gender, POP$top_goal),1)
+prop.table(table(POP$gender, POP$top_goal),1)
+
+
+
+chisq<-function(Obs){ 
+  Exp <- outer(rowSums(Obs),colSums(Obs))/sum(Obs)
+  sum((Obs-Exp)^2/Exp)
+}
+
+# Load the dataset
+
+
+# Select the two variables we want to test and make a table
+
+Observed <- table(POP$gender,POP$top_goal)
+
+# Use function we created to calculate the chi-square test statistic
+
+testStatistic <- chisq(Observed)
+
+# This computes the expected counts if we want to see them, but this
+# separate step is not necessary to carry out the permutation test; 
+# our function does it for us when calculating the test statistic.
+
+Expected <- outer(rowSums(Observed),colSums(Observed))/sum(Observed)
+
+# Resampling permutation test loop and graph of results
+# Start with selecting the two variables to be analyzed
+# If there is missing data, filter out those cases first
+
+gender <- POP$gender
+goals  <- POP$top_goal
+
+alpha <- .05
+N <- 10^4-1
+
+randomChisq<-numeric(N)
+
+for (i in 1:N){
+  goalPerm <-sample(goals)
+  randomTable <- table(gender, goalPerm)
+  randomChisq[i]<-chisq(randomTable)
+}
+
+# Graph the null distribution of the test statistic
+
+library(ggplot2)
+ggplot(data.frame(nulldist = randomChisq), aes(x = nulldist)) +
+  geom_histogram(color = "blue", fill = "lightblue") +
+  geom_vline(xintercept = testStatistic, color = "red")
+
+pvalue <- (sum(randomChisq >= testStatistic) + 1) / (N + 1)
+
+# Print the test statistic and p-value
+# The p-value is rounded to four places
+# because we performed 10^4 simulations
+
+print(paste("The chi-square test statistic is ", round(testStatistic, 4), ".", sep=""), quote = F)
+print(paste("The p-value for the test of independence is ", format(pvalue, scientific = F), ".", sep=""), quote=F)
+
+# -----------------------------------------------
+
+# The built-in R function for the chi-square test
+# This is NOT the same function we created earlier
+
+chisq.test(table(POP$gender,POP$top_goal))
+
+# Using Monte-Carlo simulation to get a p-value
+
+chisq.test(table(POP$gender,POP$top_goal), simulate.p.value = TRUE)
+
+
+```
+
+
+Age VS. Top Goal
+
+```{r}
+
+
+
+addmargins(table(POP$age, POP$top_goal),1)
+prop.table(table(POP$age, POP$top_goal),1)
+
+
+
+chisq<-function(Obs){ 
+  Exp <- outer(rowSums(Obs),colSums(Obs))/sum(Obs)
+  sum((Obs-Exp)^2/Exp)
+}
+
+# Load the dataset
+POP <- read.csv(file=url("https://raw.githubusercontent.com/STAT-JET-ASU/Datafiles/master/Instructor/popular.csv"))
+
+# Select the two variables we want to test and make a table
+
+Observed <- table(POP$age,POP$top_goal)
+
+# Use function we created to calculate the chi-square test statistic
+
+testStatistic <- chisq(Observed)
+
+# This computes the expected counts if we want to see them, but this
+# separate step is not necessary to carry out the permutation test; 
+# our function does it for us when calculating the test statistic.
+
+Expected <- outer(rowSums(Observed),colSums(Observed))/sum(Observed)
+
+# Resampling permutation test loop and graph of results
+# Start with selecting the two variables to be analyzed
+# If there is missing data, filter out those cases first
+
+age <- POP$age
+goals  <- POP$top_goal
+
+alpha <- .05
+N <- 10^4-1
+
+randomChisq<-numeric(N)
+
+for (i in 1:N){
+  goalPerm <-sample(goals)
+  randomTable <- table(age, goals)
+  randomChisq[i]<-chisq(randomTable)
+}
+
+# Graph the null distribution of the test statistic
+
+library(ggplot2)
+ggplot(data.frame(nulldist = randomChisq), aes(x = nulldist)) +
+  geom_histogram(color = "blue", fill = "lightblue") +
+  geom_vline(xintercept = testStatistic, color = "red")
+
+pvalue <- (sum(randomChisq >= testStatistic) + 1) / (N + 1)
+
+# Print the test statistic and p-value
+# The p-value is rounded to four places
+# because we performed 10^4 simulations
+
+print(paste("The chi-square test statistic is ", round(testStatistic, 4), ".", sep=""), quote = F)
+print(paste("The p-value for the test of independence is ", format(pvalue, scientific = F), ".", sep=""), quote=F)
+
+# -----------------------------------------------
+
+# The built-in R function for the chi-square test
+# This is NOT the same function we created earlier
+
+chisq.test(table(POP$age,POP$top_goal))
+
+# Using Monte-Carlo simulation to get a p-value
+
+chisq.test(table(POP$age,POP$top_goal), simulate.p.value = TRUE)
+
+```
+
+
+The Goodness of Fit Test Bendord distrbution
+
+
+```{r}
+# Chi-Square Goodness of Fit Test
+# requires the BenfordTests package
+
+# Does a given sample come from a Benford distribution?
+# see the Probability glossary for Benford distribution
+
+firstdigit   <- 1:9
+benfordprobs <- log10(1+1/firstdigit)
+
+# Consider Census data about North Carolina's 100 counties 
+# We have population and land area in miles and kilometers
+
+NC <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/nccounties20102016.csv")
+
+# examine the population of each county in 2016
+# Ho: county pop sizes follow a Benford distribution
+# Ha: county pop sizes do not follow a Benford distribution
+
+library(dplyr)
+library(BenfordTests)
+
+# use signifd function to strip off first digit
+
+NC <- NC %>% mutate(firstdigit2016 = signifd(pop2016, digits=1))
+
+# find the table of observed first digit counts 
+# for comparison, also find the expected counts
+
+observed <- table(NC$firstdigit2016)
+
+n <- sum(observed)
+
+expected <- benfordprobs * n
+
+
+# use chisq.test function, specify probabilities
+# we have to do this because they are not all =
+
+chisq.test(observed, p = benfordprobs)
+
+chisq.test(observed, p = benfordprobs, simulate.p.value = TRUE)
+
+# Benford package has a goodness of fit test
+
+chisq.benftest(NC$firstdigit2016)
+
+# examine the size of each county in 2016 (square miles)
+# Ho: county areas in square miles follow a Benford distribution
+# Ha: county areas in square miles do not follow a Benford distribution
+
+NC <- NC %>% mutate(firstdigitmiles = signifd(area_m2, digits=1))
+chisq.test(table(NC$firstdigitmiles), p = benfordprobs, simulate.p.value = TRUE)
+table(NC$firstdigitmiles)
+
+# Benford package has a goodness of fit test
+
+chisq.benftest(NC$firstdigitmiles)
+
+
+ggplot(NC,aes(x = factor(firstdigit2016))) +
+  geom_bar() +
+  scale_x_discrete("Number of First Digit") 
+
+# type chisq.test or chisq.benftest at the > to see "under the hood"
+
+```
+
+
+chisq goodness of fit test normal distrbution 
+```{r}
+# goodness of for for normal distribution
+# we have to "categorize" continuous data
+# build a rough test using Empirical Rule
+# Calculate the six areas using N(0, 1)
+
+pi1 <- pnorm(-2)
+pi2 <- pnorm(-1) - pnorm(-2)
+pi3 <- pnorm( 0) - pnorm(-1)
+pi4 <- pnorm(+1) - pnorm( 0)
+pi5 <- pnorm(+2) - pnorm(+1)
+pi6 <- pnorm(+2, lower.tail=F)
+
+nullprobs <- c(pi1, pi2, pi3, pi4, pi5, pi6)
+print(nullprobs)
+
+# consider the Anthropometric dataset
+
+ANTHRO <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/anthropometric.csv")
+
+# test height of self-identified male students
+# calculate z-scores to standardize the values
+
+ANTHROM <- ANTHRO %>% 
+  filter(gender == "male" & height != "NA") %>% 
+  mutate(zscoreht = (height - mean(height)) / sd(height))
+
+# count how many scores fall in each category
+
+observed <- c(sum(ANTHRO$zscoreht <= -2),
+              sum(-2 < ANTHROM$zscoreht & ANTHROM$zscoreht <= -1),
+              sum(-1 < ANTHROM$zscoreht & ANTHROM$zscoreht <=  0),
+              sum( 0 < ANTHROM$zscoreht & ANTHROM$zscoreht <= +1),
+              sum(+1 < ANTHROM$zscoreht & ANTHROM$zscoreht <= +2),
+              sum(ANTHROM$zscoreht > +2))
+# names(observed) <- c("less than -2sd",
+#                      "between -2sd and -1sd",
+#                      "between -1sd and 0",
+#                      "between 0 and +1sd",
+#                      "between +1sd and +2sd",
+#                      "greater than =2sd")
+print(observed)
+
+n <- sum(observed)
+
+expected <- nullprobs * n
+# names(expected) <- c("less than -2sd",
+#                      "between -2sd and -1sd",
+#                      "between -1sd and 0",
+#                      "between 0 and +1sd",
+#                      "between +1sd and +2sd",
+#                      "greater than =2sd")
+print(expected)
+
+chisq.test(observed, p = nullprobs)
+
+# note that the plots have the same shape
+# linear transformations preserve shape!
+
+library(ggplot2)
+
+ggplot(ANTHROM, aes(x = zscoreht)) +
+  geom_density()
+
+ggplot(ANTHROM, aes(x = height)) +
+  geom_density()
+
+```
+

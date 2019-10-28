@@ -1,0 +1,272 @@
+---
+title: "Exam 1"
+author: "Jacob Cathcart"
+date: "`r Sys.time()`"
+output: html_document
+---
+
+```{r, echo=FALSE, message=FALSE}
+# Additional packages
+library(car)
+library(dplyr)
+library(ggplot2)
+library(moments)
+
+# Load datasets here
+
+
+```
+
+**NOTE: All plots should have appropriate titles and axis labels. If you need to use a calculated numerical answer in a subsequent analysis, you should store it and call it back when needed, not type the value by hand. If you store a calculated answer, be sure to print it as well so I can see it.**
+
+
+
+```{r}
+oscars <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/oscarages.csv")
+
+```
+
+
+### PROBLEM 1
+
+In January 2007, Entertainment Weekly magazine featured a cover story about three Academy Award nominees for Best Actress: Meryl Streep, Judy Densch, and Helen Mirren. A major focus of the article was how old these three women were and the perceived Hollywood bias in favor of younger actresses, a discussion that persists in one form or another to this day. (data: oscarages.csv)
+
+A) Create a dataset that contains only winners prior to 2007.
+
+```{r}
+oscars07 <- oscars %>% 
+  filter(ceremony < 2007)
+```
+
+B) Compute five-number summaries to compare the ages of Best Actor and Best Actress winners prior to 2007.
+
+```{r}
+
+bestactor <- oscars07 %>%
+  filter(category == "Best Actor")
+
+fivenum(bestactor$age)
+
+
+
+bestactress <- oscars07 %>%
+  filter(category == "Best Actress") 
+
+fivenum(bestactress$age)
+
+
+
+```
+
+C) Create boxplots to compare the ages of Best Actor and Best Actress winners prior to 2007.
+
+```{r}
+ggplot(bestactor,aes(x = 1, y = age)) +
+  geom_boxplot() + 
+  coord_flip() +
+  ggtitle("Age of Best Actor Winners")
+
+ggplot(bestactress, aes(x = 1, y= age)) +
+  geom_boxplot() +
+  coord_flip() +
+  ggtitle("Age of Best Actress Winners")
+
+```
+
+D) What are the upper and lower fences for the two groups?
+
+```{r}
+upperactor <- fivenum(bestactor$age)[4] + 1.5 * IQR(bestactor$age)
+
+loweractor <- fivenum(bestactor$age)[2] - 1.5 * IQR(bestactor$age)
+
+upperactress <- fivenum(bestactress$age)[4] + 1.5 * IQR(bestactress$age)
+
+loweractress <- fivenum(bestactress$age)[2] - 1.5 * IQR(bestactress$age)
+
+print(c(upperactor,loweractor,upperactress,loweractress))
+
+
+
+
+```
+
+E) Which actress actually won the Best Actress Oscar in 2007? How old was she? For what movie did she win? Use the `filter` and `select` functions in `dplyr` to get the answer, not visual inspection of the data.
+
+```{r}
+winner07 <- oscars %>%
+  filter(ceremony == 2007, category == "Best Actress")
+
+print(winner07)
+
+```
+
+F) Was the 2007 Best Actress winner an outlier compared to previous Best Actress winners? If she were a man, would she have been an outlier compared to previous Best Actor winners? Determine the answers using code, not visual inspection of the data.
+
+```{r}
+
+print(winner07$age)
+print(c(upperactress, upperactor))
+
+```
+ANSWER : Helen Mirren is considered an outlier among women but not men
+
+
+G) Create overlapping density plots to compare Best Actress and Best Actor ages.
+
+```{r}
+ggplot(filter(oscars, category %in% c("Best Actor", "Best Actress")), aes(x = age, color = category)) +
+  geom_density()
+
+```
+
+H) In what way do these analyses support an assertion of age bias againt women in Hollywood? What are the limitations of this dataset if we want to generalize to all actors and actresses?
+
+ANSWER: The data shows that younger women typically win best actress as opposed to older men. One limitation of this data set is that it is impossible to compare the ages of the women who were nominated. If we could compare the two group it would be easier to see if older women were losing out to younger women
+
+
+### PROBLEM 2
+
+In class, we examined the height variable in the Anthropometric dataset and discussed that the overall distribution is non-normal and potentially multimodal. It may be that males and females have different height distributions that are being mixed together, so it does not make sense to treat them as one group in an analysis. (data: anthropometric.csv)
+
+```{r}
+ant <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/anthropometric.csv")
+
+```
+
+
+(A) If we analyze self-identified males and females separately, is the distribution of each group approximately normal? Create a density plot, ECDF plot and QQ plot for each group. Also compute skewness and kurtosis. Use this information to support your answer.
+
+```{r}
+ggplot(filter(ant, gender %in% c("male", "female")), aes(x = height, color = gender)) +
+  geom_density() + 
+  stat_ecdf(geom = "point")
+
+  
+
+
+```
+
+ANSWER: The groups are normal
+
+(B) Do the two groups have similar centers? What about spreads? Compute the mean, standard deviation, median, and IQR for each group and present these statistics all together in a single tibble. Use this information to support your answer.
+
+```{r}
+antmale <- ant %>%
+  filter(gender == "male")
+
+antfemale <- ant %>%
+  filter(gender == "female")
+
+mean(antmale$height)
+mean(antfemale$height, na.rm = TRUE)
+
+sd(antmale$height)
+sd(antfemale$height, na.rm = TRUE)
+
+IQR(antmale$height)
+IQR(antfemale$height, na.rm = TRUE)
+
+
+
+```
+
+
+ANSWER: no the two group have differing centers as expected. Females tend to have a lower height
+
+
+### PROBLEM 3
+
+A digital communication channel transmits binary signals (digits 0 or 1). Suppose a particular system is susceptible to electronic interference, so there is a 5% chance that any bit sent by the system will be incorrectly received (i.e., we send a 0 and it is mistakenly interpreted as 1). Assume that the interference is non-patterned, so all bit transmission errors are random and independent of one another. One simple method for error reduction is repetition code. For critical messages, the digits are transmitted as repeated blocks of five identical digits (a single 0 in the message would be sent as the block 00000 and a single 1 would be sent as 11111). The receiver uses "majority logic decoding" on blocks. If the majority of the five-block's digits are interpreted by the receiver as 0, then the transmitted digit represented by the block is recorded as a single 0. If the majority are interpreted as 1, then the transmitted digit is recorded as a 1.
+
+A) What is the probability that any single five-block (e.g., 00000) is interpreted correctly?
+
+```{r}
+
+prob <- pbinom(3,5,.05)
+
+print(prob)
+
+```
+
+B) In ASCII code, each letter is represented by a sequence of eight 0's and 1's. For example, 01001010 is the capital letter J. If we transmit a letter using the 5-block system described above, what is the probability that the letter will be interpreted correctly at the receiving end?
+
+```{r}
+prob2 <- dbinom(8,8, prob)
+
+print(prob2)
+
+
+```
+
+C) Using this system, what is the probability that your last name would be transmitted with at most one incorrect letter?
+
+```{r}
+
+prob3 <- pbinom(7, 8, prob2)
+
+print(prob3)
+```
+
+D) Suppose we could improve the performance of the system by shielding the equipment better to reduce the initial 5% single-digit chance of error. Create a plot that shows x = chance of error from 0% to 5% (in 0.1% increments) versus y = chance that a five-block is interpreted correctly at that error rate. How much do we have to reduce the single-digit error rate in order to achieve greater than a 99.9% chance of correct block interpretation?
+
+```{r}
+
+```
+
+
+### PROBLEM 4
+
+A company uses an automated process to fill two-liter soda bottles. The amount of soda dispensed into a single bottle varies according to a normal distribution with a mean of 2.01 liters and a standard deviation of 10 milliliters (the equivalent of about two teaspoons, not enough for most consumers to notice).
+
+a) What percentage of bottles actually have less than 2 liters of soda in them? 
+
+```{r}
+
+
+pnorm(2,2.01,.01) *100
+
+
+
+```
+
+b) A bottle filled with more than 2.05 liters has a risk of exploding during transport. The machine fills 200 bottles per minute for 8 hours per day. How many bottles in one day's run could potentially go kaboom?
+
+```{r}
+bottles <- 60*8*200
+pnorm(2.06,2.01,.01, lower.tail = FALSE) * bottles
+
+
+
+```
+
+c) The quality control engineers want to adjust the mean fill setting on the machine so that no more than 5% of the bottles contain less than 2 liters of soda. If the process standard deviation stays the same, what does the new mean have to be (use three decimal places) to achieve the goal of no more than 5% underfilling?
+
+```{r}
+pnorm(2,2.017,.01)*100
+
+
+```
+
+
+
+d) Instead of raising the mean fill level, the company decides to invest in a different machine that will reduce the variability in the fill process, which should address both the overfill and the underfill problems. If the mean stays at 2.01, what does the standard deviation need to be (use three decimal places) to achieve the goal of no more than 5% underfilling
+
+```{r}
+
+pnorm(2,2.01,.006) * 100
+
+```
+
+e) Use `rbinom` to simulate a full day's run of bottles for the scenario in (c). Do another simulation for the scenario in (d). Find the proportion of overfull bottles in each scenario.
+
+```{r}
+
+rbinom(2.5,60*8*200, .05)
+
+```
+
+
+<hr>
+
+DONE!!!

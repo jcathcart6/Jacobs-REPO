@@ -1,0 +1,85 @@
+<hr>
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+
+draftdata <- read.csv("https://raw.githubusercontent.com/STAT-JET-ASU/Datasets/master/Instructor/vietnamdraft.csv")
+```
+
+### The Problem
+
+To understand whether or not the 1970 Vietnam draft was random, we need to know what a random assignment would look like. Technically, any ordering (permutaion) of the 366 draft numbers could be produced by a random draw. Certain combinations, however, are less likely than others when we take into account grouping variables. We will use the `sample` function often for this purpose. 
+
+
+### Performing Our Own Random Draft Assignment
+
+```{r}
+draftnumbers <- 1:366
+draftdata$ourdraft <- sample(draftnumbers)
+
+str(draftdata)
+glimpse(draftdata)
+summary(draftdata)
+```
+
+
+```{r}
+ggplot(draftdata, aes(x = ourdraft)) + 
+  geom_histogram(aes(y=..density..), breaks = seq(from = 0, to = 366), fill = "lightblue") +
+  ggtitle("Discrete Uniform Distribution 1 to 366, probability = 1/366")  +
+  xlab("draft number") +
+  ylab("probability")
+
+ggplot(draftdata, aes(x = ourdraft)) + 
+  geom_density(fill = "lightblue") +
+  ggtitle("Smoothed Density Plot of Draft Numbers")
+
+summaryH <- draftdata %>% 
+  group_by(halfyear) %>%
+  summarize(observations = n(),
+            average      = mean(ourdraft),
+            standarddev  = sd(ourdraft),
+            minimum      = min(ourdraft),
+            maximum      = max(ourdraft))
+
+print.data.frame(summaryH)
+
+ggplot(draftdata, aes(x = ourdraft, fill = halfyear)) + 
+  geom_density(alpha = 0.3) +
+  scale_fill_manual(values = c("red", "yellow")) +
+  ggtitle("Smoothed Density Plots of Draft Numbers for Each Half-Year")
+```
+
+
+```{r}
+summaryM <- draftdata %>% 
+  group_by(month) %>%
+  summarize(observations = n(),
+            average      = mean(ourdraft),
+            standarddev  = sd(ourdraft),
+            minimum      = min(ourdraft),
+            maximum      = max(ourdraft))
+
+print.data.frame(summaryM)
+
+ggplot(summaryM, aes(x = month, y = average)) +
+  geom_bar(stat = "identity", fill = "lightblue") +
+  geom_errorbar(aes(ymin = average - standarddev/sqrt(observations), 
+                    ymax = average + standarddev/sqrt(observations)), 
+                width=.1) +
+  ggtitle("Mean Draft Number by Month with Standard Error") +
+  ylab("mean +/- SE")
+
+ggplot(draftdata, aes(x = month, y = ourdraft)) + 
+  geom_boxplot(fill = "lightgreen") +
+  ggtitle("Boxplots of Draft Numbers by Month for 1970") +
+  ylab("draft number")
+
+ggplot(draftdata, aes(x = 1:366, y = ourdraft)) +
+  geom_point() +
+  geom_smooth() +
+  xlab("order by birthday") +
+  ylab("draft number")
+```
+
